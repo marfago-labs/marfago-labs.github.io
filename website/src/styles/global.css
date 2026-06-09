@@ -71,3 +71,18 @@ ol {
 li {
   margin-bottom: 0.35rem;
 }
+
+.mermaid {
+  margin: 1.75rem 0;
+  padding: 1rem;
+  overflow-x: auto;
+  background: var(--surface, #faf8f4);
+  border: 1px solid var(--border, #e5dfd3);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
