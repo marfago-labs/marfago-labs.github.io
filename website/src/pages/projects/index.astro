@@ -1,0 +1,85 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { projects } from "../../data/projects";
+
+const statusLabel = { public: "Public", wip: "WIP", private: "Private" };
+---
+
+<BaseLayout title="Projects" description="marfago-labs repositories and live evidence.">
+  <div class="prose-wide">
+    <h1>Projects</h1>
+    <p class="lead">
+      The code is evidence. Repo READMEs hold the detail; this page is the map.
+    </p>
+
+    <div class="card-grid">
+      {
+        projects.map((p) => (
+          <article class="card">
+            <div class="card-head">
+              <h2>
+                {p.id === "ner-pipeline" ? (
+                  <a href="/projects/ner/">{p.name}</a>
+                ) : p.repo ? (
+                  <a href={p.repo} target="_blank" rel="noopener">
+                    {p.name}
+                  </a>
+                ) : (
+                  p.name
+                )}
+              </h2>
+              <span class:list={["tag", `tag--${p.status}`]}>
+                {statusLabel[p.status]}
+              </span>
+            </div>
+            <p>{p.tagline}</p>
+            {p.stack && (
+              <p class="muted stack">{p.stack.join(" → ")}</p>
+            )}
+            {p.evidence && p.evidence.length > 0 && (
+              <ul class="evidence">
+                {p.evidence.map((e) => (
+                  <li>
+                    <a href={e.href} target="_blank" rel="noopener">
+                      {e.label} ↗
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .card h2 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+  .card h2 a {
+    text-decoration: none;
+    color: var(--text);
+  }
+  .card h2 a:hover {
+    color: var(--accent);
+  }
+  .stack {
+    font-size: 0.85rem;
+    margin: 0.5rem 0 0;
+  }
+  .evidence {
+    margin: 0.75rem 0 0;
+    padding-left: 1.1rem;
+    font-size: 0.9rem;
+  }
+</style>

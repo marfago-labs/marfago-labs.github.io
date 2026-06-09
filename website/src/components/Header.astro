@@ -1,0 +1,68 @@
+---
+const nav = [
+  { href: "/", label: "Home" },
+  { href: "/blog/", label: "Blog" },
+  { href: "/projects/", label: "Projects" },
+  { href: "/about/", label: "About" },
+];
+const path = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">marfago labs</a>
+    <nav aria-label="Main">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            class:list={["nav-link", { active: path === item.href }]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .wrap {
+    max-width: var(--wide);
+    margin: 0 auto;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .brand {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .brand:hover {
+    color: var(--accent);
+  }
+  nav {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .nav-link {
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--accent);
+  }
+</style>

@@ -1,0 +1,32 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="muted">
+      © {year} Marco Fago ·
+      <a href="https://github.com/marfago-labs">marfago-labs</a> ·
+      <a href="https://www.linkedin.com/in/marco-fago/">LinkedIn</a> ·
+      <a href="https://github.com/marfago">@marfago</a>
+    </p>
+    <p class="muted small">The code is evidence. This site is the argument.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 4rem;
+    border-top: 1px solid var(--border);
+    padding: 2rem 0 2.5rem;
+  }
+  .wrap {
+    max-width: var(--wide);
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+  .small {
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+  }
+</style>

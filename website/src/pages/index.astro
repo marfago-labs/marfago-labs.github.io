@@ -1,0 +1,156 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { evidenceLinks } from "../data/projects";
+---
+
+<BaseLayout
+  title="marfago labs"
+  description="Code is cheap now. Judgment isn't. An evaluation-first AI engineering lab."
+>
+  <div class="page-content">
+    <p class="eyebrow">Principal AI engineering · Dublin</p>
+    <h1>Code is cheap now.<br />Judgment isn't.</h1>
+    <p class="lead">
+      I'm <strong>Marco Fago</strong> — a principal AI engineer. For more than 25
+      years I've shipped distributed systems and ML platforms; today I lead and
+      build agentic systems where <em>humans stay accountable</em> for what ships.
+    </p>
+    <p>
+      <strong>marfago-labs</strong> is not a product portfolio. It is my
+      <strong>manifesto in motion</strong> — where I pressure-test how I think
+      before those patterns earn a place in production.
+    </p>
+    <p>
+      The shift I care about: <strong>natural language is the new interface to the
+      system</strong> — specs, constraints, context. The implementation is
+      generated, revised, and discarded. What compounds is whether the
+      <em>intent</em> stayed true and whether you can <em>prove</em> it.
+    </p>
+
+    <div class="hero-actions">
+      <a class="button" href="/blog/">Read the series</a>
+      <a class="button button--ghost" href="/projects/">Projects & evidence</a>
+    </div>
+  </div>
+
+  <section class="section">
+    <h2>Live evidence</h2>
+    <p class="muted">Repo CI publishes these — the org site links, never duplicates.</p>
+    <div class="card-grid">
+      {
+        evidenceLinks.map((item) => (
+          <a class="card card-link" href={item.href} target="_blank" rel="noopener">
+            <h3>{item.title}</h3>
+            <p class="muted">{item.source}</p>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section page-content">
+    <h2>Tenets</h2>
+    <p class="muted"><em>Not slogans — tradeoffs I argue for in design review.</em></p>
+    <ol class="tenets">
+      <li>
+        <strong>Intent is the source code.</strong> The spec, constraints, and
+        context are the durable artifact. Generated code is exhaust.
+        <span class="even-over">Even over the how.</span>
+      </li>
+      <li>
+        <strong>No metric, no merit.</strong> Claims need benchmarks, gold data,
+        falsifiable checks.
+        <span class="even-over">Even over momentum.</span>
+      </li>
+      <li>
+        <strong>Complexity is debt</strong> — and AI lends at a brutal rate.
+        <span class="even-over">Even over raw throughput.</span>
+      </li>
+      <li>
+        <strong>Orchestrate, never abdicate.</strong> Agents plan and draft; I own
+        failure modes and the signature at the bottom.
+      </li>
+      <li>
+        <strong>Build only what earns trust.</strong> If I would not rely on it
+        under scrutiny, it is not done.
+      </li>
+    </ol>
+  </section>
+
+  <section class="section page-content">
+    <h2>Featured engineering</h2>
+    <p>
+      <a href="/projects/ner/">NER evaluation pipeline</a> — entity-first gold,
+      validated datasets, and backend benchmarks (Doc F1 + latency). The
+      architectural story is in
+      <a href="/blog/">Building an Evaluation Lab by Accident</a>.
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .eyebrow {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin: 0 0 0.75rem;
+    font-weight: 600;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin: 1.75rem 0 0;
+  }
+  .button {
+    display: inline-block;
+    padding: 0.55rem 1.1rem;
+    background: var(--accent);
+    color: #fff !important;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+  .button:not(.button--ghost):hover {
+    background: var(--accent-hover);
+    color: #fff !important;
+  }
+  .button--ghost {
+    background: transparent;
+    color: var(--accent) !important;
+    border: 1px solid var(--border);
+  }
+  .button--ghost:hover {
+    border-color: var(--accent);
+    background: var(--surface);
+    color: var(--accent-hover) !important;
+  }
+  .section {
+    margin-top: 3rem;
+  }
+  .card-link {
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s;
+  }
+  .card-link:hover {
+    border-color: var(--accent);
+  }
+  .card-link h3 {
+    margin: 0 0 0.35rem;
+    font-size: 1.05rem;
+    color: var(--accent);
+  }
+  .tenets li {
+    margin-bottom: 1rem;
+  }
+  .even-over {
+    display: block;
+    font-style: italic;
+    color: var(--muted);
+    font-size: 0.92rem;
+    margin-top: 0.25rem;
+  }
+</style>

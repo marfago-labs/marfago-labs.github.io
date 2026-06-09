@@ -1,0 +1,38 @@
+# Credential and secret material — keep out of agent context (Tab, Agent, @ mentions).
+# Syntax: gitignore. See https://cursor.com/docs/reference/ignore-file
+#
+# Note: Cursor also default-ignores .env* and respects each repo's .gitignore.
+# This file makes the boundary explicit for the marfago-labs workspace.
+
+# Local environment secrets (never commit)
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Templates are safe — agents may read these for setup docs
+!.env.example
+!**/.env.example
+!.env.*.example
+!**/.env.*.example
+
+# Key / certificate material
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+**/.ssh/
+
+# Common credential filenames
+**/credentials.json
+**/secrets.json
+**/*-credentials.json
+.secrets/
+
+# Local ML platform auth caches
+.huggingface/
+**/.huggingface/
