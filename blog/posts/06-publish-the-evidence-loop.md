@@ -4,7 +4,11 @@ slug: publish-the-evidence-loop
 series: marfago-labs-origin
 order: 6
 date: 2026-06-08
+lastUpdated: 2026-06-10
+version: "1.1"
 description: Separating the generator from ner-dataset. CI validation, live stats, and closing the loop.
+cover: /blog/covers/publish-the-evidence-loop.png
+coverAlt: A closed teal loop from generator to dataset to CI checks and back — publishing the evidence.
 ---
 
 # Publishing the Evidence
@@ -42,7 +46,7 @@ Make disagreement cheap.
 
 When I ran the full loop, the numbers told the truth I needed to hear.
 
-On synthetic news, the LLM achieved ~84% Doc F1, but cost 7 seconds per document. BERT achieved ~73% Doc F1 in 80 milliseconds. But on sparse scientific abstracts, the LLM's accuracy dropped to ~47%.
+On `synthetic_news_100`, the LLM (`openai/gpt-oss-120b:free`) achieved **83.9%** Doc F1 at **~6.9 s**/document; BERT reached **72.5%** at **~80 ms** ([benchmark report](https://marfago-labs.github.io/ner-detector/), `synthetic_news_100` table). On **`arxiv_gold`** — ten manual scientific abstracts with domain entity types — the same LLM dropped to **47.2%** Doc F1 at **~9.1 s**/document. Genre and label schema matter as much as model brand.
 
 There is no magic model. There is only routing based on measured trade-offs.
 
@@ -53,6 +57,13 @@ I started this journey because I wanted ArticleRecommender to synthesize my read
 ArticleRecommender is still the north star. Phase 1 works. But now, as I move toward Phase 2—autonomous search, enrichment pipelines, compress-then-embed ingestion—I'm not guessing. I know which NER backend to route to based on latency budgets. I know which metrics to trust when evaluating a summary.
 
 I stopped building the illusion of AI, and started engineering the reality.
+
+## Takeaways
+
+- **Separate generator from dataset** — `ner-gold-generator` produces; `ner-dataset` publishes versioned, CI-validated artifacts the benchmarks consume.
+- **Public evidence loop** — Live stats, GitHub Pages reports, and failing CI on bad gold keep the lab honest after ship.
+- **Routing from numbers** — LLM **83.9%** on `synthetic_news_100` vs **47.2%** on `arxiv_gold` (same report); pick backends from measured trade-offs, not defaults.
+- **Product returns** — ArticleRecommender Phase 2 can proceed with known NER routes and compression metrics instead of guesses.
 
 **Previous:** [Fixing LLM Offset Hallucinations](./05-entity-first-gold.md) · **Next:** [Agents Draft. I Sign.](./07-agents-draft-i-sign.md)
 

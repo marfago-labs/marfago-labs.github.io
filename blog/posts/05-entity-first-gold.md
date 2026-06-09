@@ -4,7 +4,11 @@ slug: entity-first-gold
 series: marfago-labs-origin
 order: 5
 date: 2026-06-08
+lastUpdated: 2026-06-10
+version: "1.1"
 description: LLMs can't count. How I solved character offset hallucinations using entity-first generation in ner-gold-generator.
+cover: /blog/covers/entity-first-gold.png
+coverAlt: Named entities anchored to character spans on a teal text strip — entity first, offsets second.
 ---
 
 # Fixing LLM Offset Hallucinations
@@ -46,8 +50,20 @@ To handle this, I orchestrated the generation using **Agno per-document sessions
 
 I split retry budgets: `provider_max_attempts` for when OpenRouter returns HTTP 429, and `validation_max_attempts` for when the LLM disobeys the prompt.
 
-If the LLM still fails after all retries, I do not manually fix the data. I drop the document, log the failure in `gold.log`, and move on. I would rather publish 98 validated, span-correct documents than 100 documents where two were patched by hand.
+If the LLM still fails after all retries, I do not manually fix the data. I drop the document, log the failure in `gold.log`, and move on. I would rather ship **N−2 validated, span-correct documents than N where two were patched by hand** — quality over count, not a target of exactly 98.
 
 I finally had a mechanism to generate span-valid gold data at scale. It was time to publish the evidence.
+
+## Takeaways
+
+- **LLMs are weak accountants** — Asking for character offsets invites confident wrong JSON; fuzzy-matching the math patches a broken foundation.
+- **Entity-first generation** — Generate entities and labels first, ask the LLM to write prose that contains them; let code assign spans deterministically.
+- **Validation, not hand-patching** — Agno retry loops on provider errors and validation failures; drop documents rather than manually fix gold.
+- **Publish quality over count** — Drop failed generations; never hand-patch gold to hit a quota.
+
+## The Evidence
+
+- **Repo:** [marfago-labs/ner-gold-generator](https://github.com/marfago-labs/ner-gold-generator)
+- **Output corpus:** [marfago-labs/ner-dataset](https://github.com/marfago-labs/ner-dataset)
 
 **Previous:** [Benchmarking NER: Latency, Doc F1, and Cache Bugs](./04-picking-a-ner-backend.md) · **Next:** [Publishing the Evidence](./06-publish-the-evidence-loop.md)

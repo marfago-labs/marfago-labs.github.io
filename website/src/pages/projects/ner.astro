@@ -1,10 +1,16 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { sitePageMeta } from "../../data/site-pages";
+
+const meta = sitePageMeta.ner;
 ---
 
 <BaseLayout
   title="NER evaluation pipeline"
   description="Gold generation, validated datasets, and backend benchmarks."
+  version={meta.version}
+  published={meta.published}
+  lastUpdated={meta.lastUpdated}
 >
   <div class="prose">
     <p class="muted"><a href="/projects/">← Projects</a></p>

@@ -4,20 +4,20 @@ slug: agents-draft-i-sign
 series: marfago-labs-origin
 order: 7
 date: 2026-06-09
-description: How I use AI agents as an execution layer while keeping engineering judgment, tests, CI, benchmarks, and public evidence as the control system.
+lastUpdated: 2026-06-10
+version: "1.1"
+description: The agent walk, the control loop, and the sign — how I explore with agents first, then constrain output with tests, benchmarks, and public evidence.
+cover: /blog/covers/agents-draft-i-sign.png
+coverAlt: A winding teal path through a stylized city map — the agent walk before the build.
 ---
 
 # Agents Draft. I Sign.
 
-The obvious story about this lab is that I used AI to build it.
+Parts 1 through 6 were the technical path: the product problem, the compressor experiment, the metric traps, the NER benchmarks, the gold-data inversion, and the public evidence loop. This chapter is the operating model behind them.
 
-That is true, but incomplete. It is also the least interesting part.
+The obvious story about this lab is that I used AI to build it. That is true, but incomplete. The more useful story is that I worked in two distinct phases. First, I **walked** the problem space with agents until intent was sharp enough to trust. Then I ran a **control loop** that turned that intent into artifacts I would sign.
 
-The more useful story is this: I used AI agents as an execution layer while keeping engineering judgment as the control system. The code, documentation, benchmarks, CI workflows, website, and blog were all produced with agent assistance. But the quality did not come from generation. It came from constraint.
-
-I set the problem. I rejected weak drafts. I asked whether the numbers were real. I forced the docs to match the code. I made the benchmark public. I kept the commit history clean. I owned the signature at the bottom.
-
-Agents draft. I sign.
+Agents draft. I sign. But before the draft comes the walk.
 
 ## The Experiment
 
@@ -37,86 +37,61 @@ The hypothesis is not that AI replaces engineering discipline. The hypothesis is
 
 Without that discipline, agents generate volume. With it, they can help build systems.
 
-## The Control Loop
+## The Agent Walk
 
-The working model looks like this:
+Before I ask an agent to build anything, I take a walk.
 
-```mermaid
-flowchart LR
-  A[Human intent] --> B[Agent draft]
-  B --> C[Tests and static checks]
-  C --> D[Benchmarks and reports]
-  D --> E[Human review]
-  E --> F{Trustworthy?}
-  F -->|No| G[Reject, correct, constrain]
-  G --> B
-  F -->|Yes| H[Document and publish]
-  H --> I[Public evidence]
-```
+Not a sprint to implementation. An exploratory pass through the problem space: the codebase, the prior conversations, the domain constraints, the failures from last time, the things I think I know and the things I am still unsure about. I call this **the agent walk**.
+
+The metaphor is deliberate. When you arrive in a city you do not know, you do not always pick a destination and march in a straight line. You walk. You notice landmarks. You change direction when a street looks wrong. You discover the neighbourhood you actually needed once you have seen enough of the map. The route becomes clear only after you have moved through the terrain.
+
+Building with agents works the same way. At the start, I often do not have a fully formed spec. I have a problem, a hunch, and a set of open questions. I use the agent to explore: read the repo, compare approaches, replay what happened in earlier sessions, challenge assumptions, surface trade-offs. During the walk I also ask it to propose hypotheses, argue for or against options, and search for information—documentation, papers, comparable systems—when I do not know enough yet. Those outputs are inputs to the map, not conclusions. I am not asking for code yet. I am building a shared mental map.
+
+> That map is the point.
+
+Hallucination risk is highest when an agent is pushed to **produce** before it **understands**. If I ask for a benchmark harness before we have agreed what metric matters, I get a plausible report with the wrong headline number. If I ask for gold data before we have confronted the offset problem, I get JSON that looks clean and fails validation. The walk front-loads context. Wrong assumptions surface early, while the cost of correction is still a conversation—not a pull request.
+
+Sometimes I discover the destination during the walk. I started this lab wanting ArticleRecommender to synthesize my reading list. Along the way, the walk made the real blockers visible: compression faithfulness, entity extraction, comparable gold, public evidence. I did not know I was building an evaluation lab when I began. I found out by walking.
+
+The walk is not aimless chat. It has a purpose: turn uncertainty into intent. When the map is clear enough, the walk ends and the control loop begins.
+
+## Walk, Loop, Sign
+
+The full model has three movements:
+
+| Phase | What happens | Output |
+| --- | --- | --- |
+| **Walk** | Explore context, domain, and constraints; hypothesize, compare, and research | Sharpened intent, shared map |
+| **Loop** | Draft, test, benchmark, review, reject or accept | Trustworthy artifacts |
+| **Sign** | Human accountability for what ships | Public evidence |
+
+The walk feeds the loop. The loop earns the signature.
+
+<figure class="diagram">
+  <img src="/blog/diagrams/walk-loop-sign.svg" alt="Walk, loop, sign: Walk explores, hypothesizes, and researches; Loop drafts and verifies; Sign publishes public evidence; if not trustworthy, reject and walk again." width="400" height="460" loading="lazy" decoding="async" />
+</figure>
 
 The important box is not "Agent draft." That is the cheap part now.
 
-The important box is "Trustworthy?" That is where engineering still happens.
+The important boxes are "Agent walk" and "Trustworthy?" Engineering still happens when you explore before you commit, and when you refuse to accept output that has not earned trust.
 
 In this lab, an agent can write a CI workflow, but the workflow has to run the real tests. It can draft a benchmark report, but the benchmark has to survive scrutiny. It can write a blog post, but the post cannot invent a result because it sounds good.
 
 Generation is not the standard. Evidence is.
 
+When "Trustworthy?" comes back no, the fix is not always another draft. Sometimes the map was wrong. You walk again.
+
 ## Evidence 1: Green Was Not Enough
 
-The first lesson came from `text-compressor`.
-
-I wanted to compress long YouTube transcripts before embedding them. The first evaluation path looked promising: ModernBERT-style semantic similarity gave the summaries high scores. The cells were green.
-
-That should have been the end of the story.
-
-It was not.
-
-Semantic overlap is not faithfulness. A summary can reuse the right nouns, preserve the right vibe, and still change the relationship between the facts. For a recommender that uses compressed text downstream, that is poison. A plausible summary is worse than an obviously broken one because it carries confidence into retrieval.
-
-So I stopped treating one metric as proof. I kept ModernBERT as a useful signal, but I demoted it. I added numeric checks, NLI-style faithfulness, and entity coverage. That decision moved the lab from "the model sounds right" to "the model preserved the facts I care about."
-
-The agent helped implement the machinery. It did not decide what deserved trust.
+[`text-compressor`](./02-compress-then-embed.md) taught the first lesson: ModernBERT F1 near **0.91** on compression looked like a pass until entity, numeric, and NLI checks disagreed on the same rows ([Part 3](./03-overlap-is-not-faithfulness.md)). The walk surfaced *similar to what, and faithful to what?* The agent implemented the scorecard; it did not decide what deserved trust.
 
 ## Evidence 2: The Benchmark Was Wrong Until It Was Measured
 
-The same pattern repeated in `ner-detector`.
-
-I built a pluggable NER harness because ArticleRecommender needed to extract technologies from articles, talks, and papers. I compared pattern matching, BERT-family models, GLiNER/NuNER, and LLM extraction. The headline metric became Document-Level F1 because the product needs salient entity recognition, not perfect academic span matching.
-
-Then the benchmark started lying in subtler ways.
-
-The transformers backend was slow because the model was being reloaded too often. Dataset paths and label mappings made results look worse than they were. A benchmark report can be beautifully styled and still be wrong.
-
-That is the uncomfortable part of AI-assisted work: agents can produce the shape of a professional artifact before the artifact has earned professional trust.
-
-The fix was not a better prompt. It was engineering:
-
-- Cache the backend correctly.
-- Validate dataset paths.
-- Fix label mapping.
-- Run repeatable benchmarks.
-- Publish the report where others can inspect it.
-
-After that, the numbers became useful: LLM extraction was stronger on some datasets but took seconds per document; BERT was weaker but fast enough for interactive paths. The right answer was not "use AI everywhere." The right answer was routing based on measured trade-offs.
+[`ner-detector`](./04-picking-a-ner-backend.md) repeated the pattern: a styled report before a trustworthy one — model reload per document, wrong label maps on scientific gold. The loop fixed caching and dataset wiring, then published [Doc F1 + latency](https://marfago-labs.github.io/ner-detector/) where others can challenge the numbers. Routing followed: LLM **83.9%** on news at ~7s, BERT **72.5%** at ~80ms, **47.2%** on `arxiv_gold`.
 
 ## Evidence 3: The Gold Data Could Not Be Patched by Vibes
 
-The cleanest example is `ner-gold-generator`.
-
-The naive approach to NER gold data is simple: ask an LLM to read a document and return entities with character offsets. I tried the shape of that solution. It failed for a basic reason: LLMs are bad at exact character counting.
-
-There was an easy agentic trap available there. I could have asked for fuzzy matching. I could have accepted "close enough" spans. I could have written repair logic that made bad gold data look clean.
-
-I did not.
-
-I inverted the system.
-
-The code chooses entities first. The LLM writes text that must contain those entities exactly once. Deterministic validation checks the output. Deterministic code computes offsets. If the generated document fails validation, it is retried or dropped.
-
-That design is the whole philosophy of the lab in miniature:
-
-Let the model do what it is good at. Make code own the invariants.
+[`ner-gold-generator`](./05-entity-first-gold.md) inverted the pipeline: entities first, prose second, offsets in code. No fuzzy repair of LLM counting errors. Failed validations retry or drop. That is the lab philosophy in one mechanism: **the model writes; code owns the invariants.**
 
 ## Evidence 4: The Blog Is Part of the System
 
@@ -144,16 +119,17 @@ It let me move across repos quickly. It helped scaffold packages, wire CI, draft
 
 But AI did not remove the hard parts.
 
-The hard parts were choosing the metric, noticing when a result was too convenient, deciding when to split a repo, refusing fuzzy gold data, keeping public docs accurate, and asking whether a token in the local keyring was visible to an agent with shell access.
+The hard parts were knowing when to keep walking and when to stop, choosing the metric, noticing when a result was too convenient, deciding when to split a repo, refusing fuzzy gold data, keeping public docs accurate, and asking whether a token in the local keyring was visible to an agent with shell access.
 
 Those are not typing problems. They are judgment problems.
 
-AI made the loop faster. It did not make the loop optional.
+AI made the walk and the loop faster. It did not make either optional.
 
 ## The Engineering Bar
 
 The operating standard for marfago-labs is intentionally boring in the best sense:
 
+- Walk the problem before committing to a build.
 - Tests and coverage gates where behavior is implemented.
 - Static checks and linters in CI.
 - Secret scanning.
@@ -172,15 +148,25 @@ I am not claiming that this lab proves agents can replace engineers.
 
 I am claiming something narrower and more useful:
 
-A disciplined engineer can use agents to produce high-quality public artifacts faster, if the work is constrained by explicit intent, repeatable checks, honest metrics, and human accountability.
+A disciplined engineer can use agents to produce high-quality public artifacts faster, if the work starts with exploratory context-building, continues through explicit intent and repeatable checks, and ends with honest metrics and human accountability.
+
+The agent walk turns uncertainty into intent. The control loop turns intent into evidence. The signature means I stand behind what shipped.
 
 That is the experiment.
 
-`marfago-labs` is the evidence trail: the code, the datasets, the reports, the CI, the docs, the blog, and the history that shows how many times the agent output had to be corrected before it deserved trust.
+`marfago-labs` is the evidence trail: the code, the datasets, the reports, the CI, the docs, the blog, and the history that shows how many times the agent output had to be walked, corrected, and re-tested before it deserved trust.
 
 The lesson I am taking back to ArticleRecommender is simple.
 
-Do not automate judgment away. Automate the work around judgment so there is more room for it.
+Do not automate judgment away. Walk until the map is clear. Then automate the work around judgment so there is more room for it.
+
+## Takeaways
+
+- **Walk** — Explore first: hypotheses, research, comparisons; the map of blockers is the deliverable, not a premature build plan.
+- **Loop** — Constrain agent output with tests, benchmarks, CI, and scorecards; green on one metric is not trustworthy until the bundle passes.
+- **Sign** — Public evidence and human accountability: I stand behind what shipped, not what merely rendered on screen.
+- **Agents as execution layer** — Agents draft and implement; the engineer decides what deserves trust and owns the signature at the bottom.
+- **That map is the point** — I did not set out to build an evaluation lab; the walk revealed compression, NER, gold, and evidence as the real prerequisites.
 
 **Previous:** [Publishing the Evidence](./06-publish-the-evidence-loop.md) · **Series index:** [Building an Evaluation Lab by Accident](./00-series-index.md)
 

@@ -17,7 +17,7 @@ Writing standards: [`.cursor/rules/docs-blog-writing.mdc`](../.cursor/rules/docs
 | 4 | [Benchmarking NER: Latency, Doc F1, and Cache Bugs](./posts/04-picking-a-ner-backend.md) | ner-detector benchmarks |
 | 5 | [Fixing LLM Offset Hallucinations](./posts/05-entity-first-gold.md) | ner-gold-generator |
 | 6 | [Publishing the Evidence](./posts/06-publish-the-evidence-loop.md) | ner-dataset + evidence loop |
-| 7 | [Agents Draft. I Sign.](./posts/07-agents-draft-i-sign.md) | AI-assisted engineering discipline |
+| 7 | [Agents Draft. I Sign.](./posts/07-agents-draft-i-sign.md) | Agent walk, control loop, and sign |
 
 ## Conventions
 

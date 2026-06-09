@@ -1,27 +1,39 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import MermaidInit from "../components/MermaidInit.astro";
+import { formatPageStamp } from "../lib/pageMeta";
 
 interface Props {
   title: string;
   description: string;
   date: Date;
+  lastUpdated: Date;
+  version: string;
   order: number;
+  cover?: string;
+  coverAlt?: string;
 }
 
-const { title, description, date, order } = Astro.props;
-const formatted = date.toLocaleDateString("en-IE", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
+const { title, description, date, lastUpdated, version, order, cover, coverAlt } =
+  Astro.props;
+const stamp = formatPageStamp({ version, published: date, lastUpdated });
 ---
 
 <BaseLayout title={title} description={description}>
   <article class="prose">
-    <p class="muted meta">
-      {order === 0 ? "Series index" : `Part ${order}`} · {formatted}
-    </p>
+    {
+      cover && (
+        <figure class="cover">
+          <img src={cover} alt={coverAlt ?? title} width="1200" height="675" loading="eager" />
+        </figure>
+      )
+    }
+    <div class="meta-row muted">
+      <span class="meta-label">
+        {order === 0 ? "Series index" : `Part ${order}`}
+      </span>
+      <span class="meta-stamp">{stamp}</span>
+    </div>
     <slot />
     <hr />
     <p><a href="/blog/">← All posts</a></p>
@@ -30,8 +42,38 @@ const formatted = date.toLocaleDateString("en-IE", {
 </BaseLayout>
 
 <style>
-  .meta {
+  .cover {
+    margin: 0 0 1.5rem;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 20px rgba(26, 26, 24, 0.06);
+  }
+  .cover img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
     margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+  }
+  .meta-label {
+    flex-shrink: 0;
+  }
+  .meta-stamp {
+    text-align: right;
+  }
+  @media (max-width: 520px) {
+    .meta-stamp {
+      font-size: 0.8rem;
+    }
   }
   hr {
     margin: 2.5rem 0 1rem;

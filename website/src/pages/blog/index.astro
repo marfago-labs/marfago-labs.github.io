@@ -2,20 +2,28 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import { postSlug } from "../../lib/blog";
+import { formatPageStamp } from "../../lib/pageMeta";
+import { sitePageMeta } from "../../data/site-pages";
 
 const posts = (await getCollection("blog")).sort(
   (a, b) => a.data.order - b.data.order,
 );
+const meta = sitePageMeta.blog;
 ---
 
 <BaseLayout
   title="Blog"
   description="Building an Evaluation Lab by Accident — engineering narrative from marfago-labs."
+  version={meta.version}
+  published={meta.published}
+  lastUpdated={meta.lastUpdated}
 >
   <div class="prose-wide">
     <h1>Blog</h1>
     <p class="lead">
-      Stories about problems, tradeoffs, and measured outcomes — not changelogs.
+      How a recommender MVP forced an evaluation lab — problems, tradeoffs, and
+      measured outcomes, not changelogs. Start with
+      <a href="/blog/series-index/">Building an Evaluation Lab by Accident</a>.
     </p>
 
     <ul class="post-list">
@@ -23,19 +31,34 @@ const posts = (await getCollection("blog")).sort(
         posts.map((post) => (
           <li>
             <article class="post-item">
+              {
+                post.data.cover && (
+                  <a class="post-thumb" href={`/blog/${postSlug(post.id)}/`}>
+                    <img
+                      src={post.data.cover}
+                      alt={post.data.coverAlt ?? post.data.title}
+                      width="320"
+                      height="180"
+                      loading="lazy"
+                    />
+                  </a>
+                )
+              }
+              <div class="post-body">
               <p class="muted meta">
                 {post.data.order === 0 ? "Series" : `Part ${post.data.order}`}
                 ·{" "}
-                {post.data.date.toLocaleDateString("en-IE", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
+                {formatPageStamp({
+                  version: post.data.version,
+                  published: post.data.date,
+                  lastUpdated: post.data.lastUpdated,
                 })}
               </p>
               <h2>
                 <a href={`/blog/${postSlug(post.id)}/`}>{post.data.title}</a>
               </h2>
               <p>{post.data.description}</p>
+              </div>
             </article>
           </li>
         ))
@@ -51,8 +74,38 @@ const posts = (await getCollection("blog")).sort(
     margin: 2rem 0 0;
   }
   .post-item {
+    display: flex;
+    gap: 1.25rem;
     padding: 1.25rem 0;
     border-bottom: 1px solid var(--border);
+  }
+  .post-thumb {
+    flex: 0 0 9rem;
+    display: block;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    align-self: flex-start;
+  }
+  .post-thumb img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .post-body {
+    flex: 1;
+    min-width: 0;
+  }
+  @media (max-width: 520px) {
+    .post-item {
+      flex-direction: column;
+    }
+    .post-thumb {
+      flex-basis: auto;
+      max-width: 100%;
+    }
   }
   .post-item h2 {
     margin: 0.25rem 0 0.5rem;

@@ -87,10 +87,14 @@ export const evidenceLinks = [
     title: "Dataset quality dashboard",
     href: "https://marfago-labs.github.io/ner-dataset/",
     source: "ner-dataset CI",
+    question:
+      "Does our NER gold have valid spans, genre coverage, and integrity checks that CI enforces?",
   },
   {
     title: "NER backend benchmark",
     href: "https://marfago-labs.github.io/ner-detector/",
     source: "ner-detector CI",
+    question:
+      "Which extractor wins on Doc F1 vs wall-clock latency for ingest and enrichment?",
   },
 ];

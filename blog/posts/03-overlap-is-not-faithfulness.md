@@ -4,50 +4,117 @@ slug: overlap-is-not-faithfulness
 series: marfago-labs-origin
 order: 3
 date: 2026-06-08
+lastUpdated: 2026-06-10
+version: "1.2"
 description: Why semantic similarity metrics give you false confidence, and how I built a multi-metric faithfulness scorecard.
+cover: /blog/covers/overlap-is-not-faithfulness.png
+coverAlt: Two overlapping teal circles beside a scorecard — overlap is not the same as faithfulness.
 ---
 
 # ModernBERT and the Overlap Trap
 
-When I first built `text-compressor`, I needed a way to evaluate the quality of the LLM summaries. The standard approach is to use a semantic similarity metric. I wired up ModernBERT, ran the evaluation, and the numbers looked fantastic. High F1 scores across the board.
+When I first built `text-compressor`, I needed a way to evaluate the quality of the LLM summaries. The standard approach is to use a semantic similarity metric. I wired up ModernBERT (`LazerLambda/ModernBERT-base-ModBERTScore-12`), ran the evaluation on my fixed corpus, and the numbers looked fantastic.
+
+A note on the corpus before the numbers: I did **not** pick these documents because they represent what is state of the art in 2026. The fixed set in `corpus.json` is twelve canonical arXiv abstracts (Attention, BERT, ResNet, GPT‑3, CLIP, …) plus ten YouTube transcripts — papers I already knew by heart, with stable text I could re-run cheaply. They are **evaluation fixtures**, not reading recommendations. ResNet is from 2015; the Transformer paper is from 2017. Their abstracts still talk about ImageNet leaderboards and BLEU records from that era, and that is fine: I am testing whether compression **preserves what the source actually says**, not whether the source is still the best method available today.
+
+The first real compare run scored eight of those arXiv abstracts with `openai/gpt-oss-120b:free` (YouTube came later — the path ArticleRecommender actually cares about). **Average ModernBERT F1 was 0.913**. Every paper scored above 0.88.
 
 Green cells. Ship it, right?
 
 Wrong.
 
-## The Danger of Semantic Similarity
+## A Summary That Lied Politely
 
-If you look at how ModernBERT (or any BERTScore-style metric) actually works, you realize it is measuring *overlap*, not *entailment*. It encodes the source text and the summary separately, then compares the contextual token embeddings via cosine similarity.
+Take ResNet (`1512.03385`, 2015). The compressor produced a tight, authoritative summary:
 
-Here is the problem: An LLM can generate a summary that uses all the right jargon, sounds incredibly similar to the source, and completely hallucinate the relationship between the concepts. It can confidently state that "Pinecone acquired Dremio" when the source merely mentioned both in the same paragraph. ModernBERT will look at the embeddings, see a high degree of semantic overlap, and give you a passing grade.
+> The paper introduces a residual learning framework that reformulates layers to learn residual functions relative to their inputs, enabling the training of neural networks far deeper than previously feasible. Empirical results show that residual networks up to 152 layers achieve state-of-the-art performance on ImageNet, attaining a 3.57% top-5 error and winning the ILSVRC 2015 classification challenge, while also delivering significant gains on CIFAR-10, COCO detection, and localization tasks.
 
-Overlap is not faithfulness. Similarity is not factuality. If I embedded these summaries into ArticleRecommender, I would be building a retrieval system based on plausible fiction.
+It reads like the abstract — including decade-old "state-of-the-art" claims that nobody would cite for a 2026 benchmark. ModernBERT agreed: **F1 0.912**.
 
-## Building the Faithfulness Scorecard
+The scorecard did not:
 
-I had to stop looking for a single magic number. I needed a scorecard.
+| Metric | ResNet (`1512.03385`) |
+|--------|----------------------|
+| ModernBERT F1 | **0.912** |
+| Entity coverage | **0.50** |
+| Numeric match | **0.57** (4/7 numbers) |
+| NLI faithfulness | **0.50** (1/2 sentences) |
 
-I expanded the `text-compressor` evaluation suite to run a bundle of metrics on every summary:
+Nothing here is a Pinecone-acquired-Dremio fantasy. The summary is *plausible*. It keeps the right jargon, the right tone, and most of the headline claims. Entity coverage was only **0.50** (3/9 gold entities matched) — `COCO` and combined labels like `ILSVRC & COCO` never made it across, and the CoNLL tagger was also measuring its own noise (`miscellaneous: Deep`, `miscellaneous: Learning`). NLI flagged the second sentence as unsupported. Numeric match dropped three of seven source figures.
 
-1. **ModernBERT F1:** I kept it, but explicitly demoted it. It is useful for comparing the general "closeness" of two models, but it is *not* a measure of factuality.
-2. **Numeric Match:** A brittle but brutally honest heuristic. If the source text mentions "95% coverage", does that exact number survive in the summary?
-3. **NLI Faithfulness (Light):** I brought in a Natural Language Inference model (`mDeBERTa-v3`) to perform a heuristic entailment check. Does the source text actually *entail* the claims made in the summary sentences?
-4. **Entity Coverage:** This was the critical one. If the source talks about "GraphRAG" and "Pinecone," did those named entities survive the compression?
+If I had shipped compress-then-embed on ModernBERT alone, ArticleRecommender would have embedded text that *sounded* like the source while quietly losing the handles I needed for downstream investigation.
 
-If ArticleRecommender is going to investigate entities, the compressor *must* preserve them.
+Overlap is not faithfulness. Similarity is not factuality.
 
-## The Regex Embarrassment
+## Why Overlap Passes Plausible Fiction
 
-To calculate Entity Coverage, I needed a way to extract entities from both the source and the summary. For the MVP, I used a regex-based pattern matcher (`DEFAULT_ENTITY_NER_BACKEND = "pattern"`).
+ModernBERT (and BERTScore-style metrics generally) encode the source and summary **separately**, then score token-level embedding similarity. That measures *lexical and semantic overlap*, not whether each summary sentence is entailed by the source. [Maynez et al. (2020)](https://arxiv.org/abs/2005.00661) document the gap between overlap metrics and factual consistency; [SummaC](https://arxiv.org/abs/2111.09525) and [FactCC](https://arxiv.org/abs/1910.12840) exist because the field kept rediscovering this mistake.
 
-It was the wrong tool for the job.
+The ResNet summary is the pattern: polished prose, high overlap, partial fact loss. A retrieval system built on that text does not retrieve fiction — it retrieves **confident partial truth**, which is harder to catch in production.
 
-When I ran it against machine learning abstracts, the pattern matcher proudly identified words like "neural," "learning," and "attention" as named entities. It was noisy, brittle, and completely useless for rigorous evaluation. I tried patching it with stop-word filters (`DEFAULT_ENTITY_STOP_NORMS`), but I was just putting band-aids on a flawed architecture.
+## The Scorecard Run
 
-I could not evaluate this AI system with regex alone.
+I stopped looking for a single magic number and expanded the evaluation suite to run four metrics on every summary (`config/eval_metrics.yaml`):
 
-I needed real Named Entity Recognition (NER). But which model? BERT? A zero-shot model like GLiNER? Or do I just ask an LLM?
+1. **ModernBERT F1** — overlap / closeness. Useful for comparing compression models. **Not** a faithfulness certificate.
+2. **Numeric match** — brittle but honest. What fraction of numeric tokens in the source appear in the summary?
+3. **NLI faithfulness (light)** — `mDeBERTa-v3` checks whether source chunks entail each summary sentence (≥0.5 entailment probability).
+4. **Entity coverage** — NER F1 between entities extracted from source vs summary. Critical for ArticleRecommender: if "GraphRAG" or "CLIP" vanishes in compression, investigation never starts.
 
-I didn't want to guess. I wanted to measure.
+On the same eight-paper compare run, the bundle told a different story than ModernBERT alone:
+
+| Metric | Corpus average |
+|--------|----------------|
+| ModernBERT F1 | **0.913** |
+| Entity coverage | **0.672** |
+| Numeric match | **0.720** |
+| NLI faithfulness | **0.750** |
+
+ModernBERT said "excellent." The scorecard said "uneven." Different rows failed different checks — which is exactly why a bundle beats a headline number.
+
+| Paper (year) | ModernBERT F1 | Entity | Numeric | NLI |
+|--------------|---------------|--------|---------|-----|
+| Attention (2017) | 0.908 | 1.00 | **0.40** | 1.00 |
+| ResNet (2015) | 0.912 | **0.50** | **0.57** | **0.50** |
+| GPT‑3 (2020) | 0.913 | 0.80 | 1.00 | **0.33** |
+| ViT (2020) | 0.903 | 0.77 | 1.00 | **0.50** |
+
+The years matter for expectations, not for the metric math. Attention (2017) is the numeric trap: NLI and entity coverage look fine, but the summary kept **28.4** and **41.8** BLEU while dropping **2 BLEU**, **3.5 days**, and **eight GPUs**. GPT‑3 (2020) is the entailment trap: perfect numeric preservation, **91.3%** overlap, but only **one of three** summary sentences entailed by the source. Old or new, the failure mode is the same — plausible compression that does not fully carry the facts forward.
+
+No single column is sufficient. Each one catches a failure mode the others miss.
+
+## The NER Embarrassment
+
+Entity coverage depends on NER. I assumed the hard part was compression. The compare run taught me the evaluator was also broken.
+
+I scored entity coverage with `dslim/bert-base-NER` (CoNLL-style transformers backend). On ML abstracts it tagged generic words as entities: `miscellaneous: Deep`, `miscellaneous: Learning`, `miscellaneous: Recognition` on ResNet; `miscellaneous: English`, `miscellaneous: German`, `miscellaneous: French` on the Attention paper. I was measuring entity preservation with a tagger that treated "English" as a named entity.
+
+I added `DEFAULT_ENTITY_STOP_NORMS` in `entity_coverage.py` — a stop list for exactly this noise (`deep`, `learning`, `attention`, `english`, …). Then I noticed I had never wired it into the scorer. The band-aid existed in code and did nothing in production. That smell mattered: I was patching symptoms in evaluation tooling, not fixing the dependency.
+
+The codebase now defaults to the `pattern` backend in `ner-detector` (arXiv IDs, acronyms, years, numbers). That is narrower and more predictable than CoNLL BERT on scientific prose — but it is still not a product-grade entity extractor. I could not trust entity coverage until I could trust NER.
+
+## What I Decided
+
+I did not reject compress-then-embed. I rejected **one green column** as a release gate.
+
+ModernBERT stays on the scorecard — it is a fast way to compare how "close" two compression models are. But the decision rule changed: a summary is trustworthy for the ArticleRecommender path only when **entity coverage, numeric match, and NLI faithfulness are acceptable together**, not when overlap alone looks good. On the May 2026 compare run, that ruled out treating any single model as "done." The best compressor still lost entities, numbers, or unsupported sentences on multiple papers while ModernBERT smiled.
+
+That is the architectural outcome: compress-then-embed remains a hypothesis worth pursuing, but only behind a **multi-metric gate** I can re-run on the full 22-item corpus (12 arXiv + 10 YouTube). The arXiv slice proved the scorecard mechanics; the YouTube transcripts are the product-shaped stress test — long, messy, and full of names and numbers from talks I might actually ingest. Overlap metrics are a compass, not a contract.
+
+The next bottleneck was obvious. Entity coverage is only as good as the NER backend underneath it. I needed real Named Entity Recognition — and I did not want to guess which one.
+
+## Takeaways
+
+- **Overlap is not faithfulness** — ModernBERT F1 near **0.91** looked like a pass; entity, numeric, and NLI checks on the same rows told a different story.
+- **No single magic number** — Use a scorecard: overlap for model comparison, numeric match for figures, NLI for unsupported sentences, entity coverage for names that drive downstream work.
+- **Evaluator quality matters** — Entity coverage is only as trustworthy as the NER underneath it; noisy taggers measure noise, not compression quality.
+- **Corpus fixtures, not recommendations** — Canonical arXiv abstracts prove scorecard mechanics; YouTube transcripts are the product-shaped stress test.
+- **Release gate** — Compress-then-embed stays on the roadmap behind a multi-metric bundle, not one green column.
+
+## The Evidence
+
+- **Compare run:** `text-compressor/results/compare-20260524T225903Z/models/openai--gpt-oss-120b-free/metrics.json`
+- **Eval config:** `text-compressor/config/eval_metrics.yaml`
+- **Repo:** [marfago-labs/text-compressor](https://github.com/marfago-labs/text-compressor)
 
 **Previous:** [Compressing YouTube for the Vector DB](./02-compress-then-embed.md) · **Next:** [Benchmarking NER: Latency, Doc F1, and Cache Bugs](./04-picking-a-ner-backend.md)

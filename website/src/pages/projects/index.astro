@@ -1,11 +1,19 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { projects } from "../../data/projects";
+import { sitePageMeta } from "../../data/site-pages";
 
 const statusLabel = { public: "Public", wip: "WIP", private: "Private" };
+const meta = sitePageMeta.projects;
 ---
 
-<BaseLayout title="Projects" description="marfago-labs repositories and live evidence.">
+<BaseLayout
+  title="Projects"
+  description="marfago-labs repositories and live evidence."
+  version={meta.version}
+  published={meta.published}
+  lastUpdated={meta.lastUpdated}
+>
   <div class="prose-wide">
     <h1>Projects</h1>
     <p class="lead">
