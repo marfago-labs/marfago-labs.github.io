@@ -1,0 +1,26 @@
+---
+/** Client-side Mermaid rendering for blog markdown diagrams. */
+---
+
+<script>
+  import mermaid from "mermaid";
+
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: "neutral",
+    securityLevel: "loose",
+    fontFamily: "inherit",
+  });
+
+  async function renderMermaid() {
+    const nodes = document.querySelectorAll(".prose .mermaid:not([data-processed])");
+    if (nodes.length === 0) return;
+    await mermaid.run({ nodes });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => void renderMermaid());
+  } else {
+    void renderMermaid();
+  }
+</script>
