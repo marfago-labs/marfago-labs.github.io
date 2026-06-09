@@ -4,7 +4,11 @@ slug: series-index
 series: marfago-labs-origin
 order: 0
 date: 2026-06-08
+lastUpdated: 2026-06-10
+version: "1.1"
 description: How a personal tech news recommender forced me to build an open-source evaluation lab, and what it taught me about building with AI under engineering discipline.
+cover: /blog/covers/series-index.png
+coverAlt: A branching teal path through layered lab instruments — an evaluation stack built one experiment at a time.
 ---
 
 # Building an Evaluation Lab by Accident
@@ -24,11 +28,11 @@ I had to stop building features and start building measurement mechanisms. This 
 ## The Series Arc
 
 1. **[The Minimum Credible Loop](./01-i-didnt-want-another-bookmark-app.md)** — Why I built ArticleRecommender, what Phase 1 actually shipped, and why I deliberately stopped before building the "smart" enrichment.
-2. **[Compressing YouTube for the Vector DB](./02-compress-then-embed.md)** — The `text-compressor` experiment. Why you can't just embed raw transcripts, and the operational reality of API churn.
+2. **[Compressing YouTube for the Vector DB](./02-compress-then-embed.md)** — Embedder context limits, compress-then-embed sizing, hybrid retrieval, and the operational reality of API churn.
 3. **[ModernBERT and the Overlap Trap](./03-overlap-is-not-faithfulness.md)** — Why semantic similarity metrics give you false confidence, and how I built a multi-metric faithfulness scorecard.
 4. **[Benchmarking NER: Latency, Doc F1, and Cache Bugs](./04-picking-a-ner-backend.md)** — Comparing LLMs, BERT, and GLiNER in `ner-detector`. Why I chose Doc F1, and the latency bug that almost ruined the benchmark.
 5. **[Fixing LLM Offset Hallucinations](./05-entity-first-gold.md)** — LLMs can't count. How I solved character offset hallucinations using entity-first generation in `ner-gold-generator`.
 6. **[Publishing the Evidence](./06-publish-the-evidence-loop.md)** — Separating the generator from `ner-dataset`. CI validation, live stats, and closing the loop so I can get back to building the recommender.
-7. **[Agents Draft. I Sign.](./07-agents-draft-i-sign.md)** — The operating model behind the lab: agents draft code, docs, diagrams, and blog posts; I keep judgment, tests, benchmarks, and accountability in the loop.
+7. **[Agents Draft. I Sign.](./07-agents-draft-i-sign.md)** — The operating model behind the lab: the agent walk to sharpen intent, the control loop to earn trust, and the signature at the bottom.
 
-If you are building agentic systems and are tired of vibes-based evaluation, this is how I put numbers behind the architecture. If you are using agents to build software, the final chapter is the part I would not skip: velocity is cheap now, but trust still has to be engineered.
+If you are building agentic systems and are tired of vibes-based evaluation, this is how I put numbers behind the architecture. If you are using agents to build software, the final chapter names the method: walk the problem first, constrain the output second, sign only what survives scrutiny.

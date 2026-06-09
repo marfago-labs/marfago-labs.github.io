@@ -1,46 +1,100 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { evidenceLinks } from "../data/projects";
+import { sitePageMeta } from "../data/site-pages";
+
+const meta = sitePageMeta.home;
+
+const arcSteps = [
+  {
+    label: "North star",
+    title: "ArticleRecommender Phase 1",
+    href: "/blog/i-didnt-want-another-bookmark-app/",
+  },
+  {
+    label: "Compression",
+    title: "Compress-then-embed",
+    href: "/blog/compress-then-embed/",
+  },
+  {
+    label: "NER",
+    title: "Backend benchmarks",
+    href: "/blog/picking-a-ner-backend/",
+  },
+  {
+    label: "Evidence",
+    title: "Published gold & CI",
+    href: "/blog/publish-the-evidence-loop/",
+  },
+];
 ---
 
 <BaseLayout
   title="marfago labs"
-  description="Code is cheap now. Judgment isn't. An evaluation-first AI engineering lab."
+  description="Building an evaluation lab by accident — measurement, gold data, and public benchmarks before agentic ingest ships."
+  version={meta.version}
+  published={meta.published}
+  lastUpdated={meta.lastUpdated}
 >
-  <div class="page-content">
-    <p class="eyebrow">Principal AI engineering · Dublin</p>
-    <h1>Code is cheap now.<br />Judgment isn't.</h1>
+  <div class="page-content hero">
+    <p class="eyebrow">Evaluation-first AI engineering · Marco Fago · Dublin</p>
+    <h1>I couldn't trust my own recommender pipeline.</h1>
     <p class="lead">
-      I'm <strong>Marco Fago</strong> — a principal AI engineer. For more than 25
-      years I've shipped distributed systems and ML platforms; today I lead and
-      build agentic systems where <em>humans stay accountable</em> for what ships.
+      I wanted a personal intelligence platform — ingest arXiv papers and YouTube
+      talks, extract technologies worth investigating (Pinecone, GraphRAG, …),
+      connect the sources, and hand me a briefing. Phase 1 worked: save, chat,
+      search. Phase 2 needed compression, embeddings, and entity extraction —
+      and every step <em>looked</em> fine until I tried to measure it.
     </p>
     <p>
-      <strong>marfago-labs</strong> is not a product portfolio. It is my
-      <strong>manifesto in motion</strong> — where I pressure-test how I think
-      before those patterns earn a place in production.
-    </p>
-    <p>
-      The shift I care about: <strong>natural language is the new interface to the
-      system</strong> — specs, constraints, context. The implementation is
-      generated, revised, and discarded. What compounds is whether the
-      <em>intent</em> stayed true and whether you can <em>prove</em> it.
+      <strong>marfago-labs</strong> is the evaluation lab I had to build first:
+      repos, gold data, benchmarks, and CI-published reports — so agent-assisted
+      code does not outrun human judgment. The blog series
+      <a href="/blog/series-index/">Building an Evaluation Lab by Accident</a>
+      is the architectural story; this site links the live numbers.
     </p>
 
     <div class="hero-actions">
-      <a class="button" href="/blog/">Read the series</a>
-      <a class="button button--ghost" href="/projects/">Projects & evidence</a>
+      <a class="button" href="/blog/series-index/">Start with the series</a>
+      <a class="button button--ghost" href="/projects/ner/">See live benchmarks</a>
     </div>
   </div>
 
+  <section class="section page-content">
+    <h2>The arc</h2>
+    <p class="muted">
+      Product blocked on measurement — each chapter is one failure mode turned into
+      a mechanism.
+    </p>
+    <ol class="arc">
+      {
+        arcSteps.map((step) => (
+          <li class="arc-step">
+            <span class="arc-label">{step.label}</span>
+            <a href={step.href}>{step.title}</a>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="muted arc-note">
+      Capstone:
+      <a href="/blog/agents-draft-i-sign/">Agents Draft. I Sign.</a>
+      — walk, loop, sign.
+    </p>
+  </section>
+
   <section class="section">
     <h2>Live evidence</h2>
-    <p class="muted">Repo CI publishes these — the org site links, never duplicates.</p>
+    <p class="muted page-content">
+      Repo CI publishes these dashboards — the org site links out, never duplicates.
+      Read the series first if you want to know <em>why</em> these exist.
+    </p>
     <div class="card-grid">
       {
         evidenceLinks.map((item) => (
           <a class="card card-link" href={item.href} target="_blank" rel="noopener">
             <h3>{item.title}</h3>
+            <p class="card-question">{item.question}</p>
             <p class="muted">{item.source}</p>
           </a>
         ))
@@ -53,18 +107,9 @@ import { evidenceLinks } from "../data/projects";
     <p class="muted"><em>Not slogans — tradeoffs I argue for in design review.</em></p>
     <ol class="tenets">
       <li>
-        <strong>Intent is the source code.</strong> The spec, constraints, and
-        context are the durable artifact. Generated code is exhaust.
-        <span class="even-over">Even over the how.</span>
-      </li>
-      <li>
         <strong>No metric, no merit.</strong> Claims need benchmarks, gold data,
         falsifiable checks.
         <span class="even-over">Even over momentum.</span>
-      </li>
-      <li>
-        <strong>Complexity is debt</strong> — and AI lends at a brutal rate.
-        <span class="even-over">Even over raw throughput.</span>
       </li>
       <li>
         <strong>Orchestrate, never abdicate.</strong> Agents plan and draft; I own
@@ -75,15 +120,11 @@ import { evidenceLinks } from "../data/projects";
         under scrutiny, it is not done.
       </li>
     </ol>
-  </section>
-
-  <section class="section page-content">
-    <h2>Featured engineering</h2>
-    <p>
-      <a href="/projects/ner/">NER evaluation pipeline</a> — entity-first gold,
-      validated datasets, and backend benchmarks (Doc F1 + latency). The
-      architectural story is in
-      <a href="/blog/">Building an Evaluation Lab by Accident</a>.
+    <p class="muted">
+      Full principles and background —
+      <a href="/about/">About</a>.
+      Manifesto line I keep in mind:
+      <strong>code is cheap now; judgment isn't.</strong>
     </p>
   </section>
 </BaseLayout>
@@ -130,6 +171,44 @@ import { evidenceLinks } from "../data/projects";
   .section {
     margin-top: 3rem;
   }
+  .section > h2 {
+    margin-bottom: 0.35rem;
+  }
+  .arc {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0.75rem;
+    display: grid;
+    gap: 0.65rem;
+  }
+  @media (min-width: 640px) {
+    .arc {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .arc-step {
+    margin: 0;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface, #faf8f4);
+  }
+  .arc-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 0.25rem;
+  }
+  .arc-step a {
+    font-weight: 500;
+  }
+  .arc-note {
+    margin: 0.5rem 0 0;
+    font-size: 0.92rem;
+  }
   .card-link {
     text-decoration: none;
     color: inherit;
@@ -139,9 +218,15 @@ import { evidenceLinks } from "../data/projects";
     border-color: var(--accent);
   }
   .card-link h3 {
-    margin: 0 0 0.35rem;
+    margin: 0 0 0.5rem;
     font-size: 1.05rem;
     color: var(--accent);
+  }
+  .card-question {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: var(--text, inherit);
   }
   .tenets li {
     margin-bottom: 1rem;

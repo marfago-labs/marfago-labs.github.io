@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 460" role="img" aria-labelledby="wls-title wls-desc">
+  <title id="wls-title">Walk, loop, sign</title>
+  <desc id="wls-desc">Three movements: Walk explores, hypothesizes, and researches to sharpen intent; Loop drafts and verifies until trustworthy; Sign publishes public evidence; if not trustworthy, reject and walk again.</desc>
+
+  <rect width="400" height="460" fill="#faf8f4"/>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5c5a54"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0d4f4f"/>
+    </marker>
+    <style>
+      .phase { fill: #fffef9; stroke: #c8c2b6; stroke-width: 1.5; }
+      .phase-walk { fill: #d4ede8; stroke: #0d4f4f; stroke-width: 2; }
+      .phase-sign { fill: #d4ede8; stroke: #0d4f4f; stroke-width: 2; }
+      .diamond { fill: #d4ede8; stroke: #0d4f4f; stroke-width: 2; }
+      .reject { fill: #fffef9; stroke: #c8c2b6; stroke-width: 1.5; }
+      .divider { stroke: #a8a298; stroke-width: 1.5; }
+      .divider-accent { stroke: #0d4f4f; stroke-width: 1.5; stroke-opacity: 0.45; }
+      .title { font: 700 15px &quot;Segoe UI&quot;, system-ui, sans-serif; fill: #0d4f4f; text-anchor: middle; dominant-baseline: central; }
+      .body { font: 500 12px &quot;Segoe UI&quot;, system-ui, sans-serif; fill: #1a1a18; text-anchor: middle; dominant-baseline: central; }
+      .output { font: 600 11px &quot;Segoe UI&quot;, system-ui, sans-serif; fill: #5c5a54; text-anchor: middle; dominant-baseline: central; }
+      .edge-label { font: 700 12px &quot;Segoe UI&quot;, system-ui, sans-serif; fill: #0d4f4f; text-anchor: middle; dominant-baseline: central; }
+      .connector { fill: none; stroke: #5c5a54; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow); }
+      .connector-loop { fill: none; stroke: #0d4f4f; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-accent); }
+    </style>
+  </defs>
+
+  <g id="edges">
+    <path class="connector" d="M 200 108 V 124"/>
+    <path class="connector" d="M 200 204 V 220"/>
+    <path class="connector" d="M 248 260 H 290 V 318"/>
+    <path class="connector" d="M 152 260 H 110 V 318"/>
+    <path class="connector-loop" d="M 40 342 H 22 V 52 H 50"/>
+  </g>
+
+  <g id="nodes">
+    <rect class="phase-walk" x="50" y="16" width="300" height="92" rx="10"/>
+    <text class="title" x="200" y="42">Walk</text>
+    <text class="body" x="200" y="64">Explore · hypothesize · research · compare</text>
+    <line class="divider-accent" x1="72" y1="78" x2="328" y2="78"/>
+    <text class="output" x="200" y="94">Sharpened intent · shared map</text>
+
+    <rect class="phase" x="50" y="124" width="300" height="80" rx="10"/>
+    <text class="title" x="200" y="148">Loop</text>
+    <text class="body" x="200" y="168">Draft · test · benchmark · review</text>
+    <line class="divider" x1="72" y1="182" x2="328" y2="182"/>
+    <text class="output" x="200" y="196">Trustworthy artifacts</text>
+
+    <polygon class="diamond" points="200,220 248,260 200,300 152,260"/>
+    <text class="body" x="200" y="260">Trustworthy?</text>
+
+    <rect class="reject" x="40" y="318" width="140" height="48" rx="8"/>
+    <text class="body" x="110" y="342">Reject · walk again</text>
+
+    <rect class="phase-sign" x="220" y="318" width="140" height="96" rx="10"/>
+    <text class="title" x="290" y="344">Sign</text>
+    <text class="body" x="290" y="364">Human accountability</text>
+    <line class="divider-accent" x1="232" y1="378" x2="348" y2="378"/>
+    <text class="output" x="290" y="394">Public evidence</text>
+  </g>
+
+  <g id="edge-labels">
+    <text class="edge-label" x="138" y="248">No</text>
+    <text class="edge-label" x="262" y="248">Yes</text>
+  </g>
+</svg>

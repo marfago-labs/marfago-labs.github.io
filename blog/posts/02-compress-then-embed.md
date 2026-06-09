@@ -4,39 +4,111 @@ slug: compress-then-embed
 series: marfago-labs-origin
 order: 2
 date: 2026-06-08
-description: The text-compressor experiment. Why you can't just embed raw transcripts, and the operational reality of API churn.
+lastUpdated: 2026-06-10
+version: "1.2"
+description: The text-compressor experiment — embedder context limits, compress-then-embed, and the operational reality of API churn.
+cover: /blog/covers/compress-then-embed.png
+coverAlt: A long transcript ribbon narrowing into a dense teal block before a vector grid — compress, then embed.
 ---
 
 # Compressing YouTube for the Vector DB
 
-When I designed the ingest pipeline for ArticleRecommender, arXiv abstracts were easy. They are short, dense, and well-structured. You fetch them, embed them in Postgres via `pgvector`, and you're done. No LLM required in the hot path.
+When I designed the ingest pipeline for ArticleRecommender, arXiv abstracts were easy. They are short, dense, and well-structured. You fetch them, run them through an embedding model, store the resulting vector in Postgres via `pgvector`, and you're done. No LLM required in the hot path.
 
-YouTube is a different story. A raw transcript from a 45-minute tech talk is a sprawling, repetitive mess of filler words. If you chunk a raw transcript and embed it, you are paying twice—once in storage, and again in retrieval accuracy. Your vector space becomes polluted with chunks like *"so yeah, moving on to the next slide."*
+At query time the flow is the same in reverse: embed the search text, find nearest neighbors by cosine distance. Phase 1 used **one vector per document** — simple rows, simple retrieval. That design only works when the source text fits entirely inside the embedder's input window.
 
-I needed a different architecture. I needed **Compress-then-Embed**.
+## The Embedder Window
+
+An embedding model does not read a whole transcript. It reads up to **N tokens** — commonly **512** on smaller bi-encoders, up to **~8k** on larger API models — and returns **one** fixed-size vector. The limit is in tokens, not characters. Roughly, English prose runs about four characters per token; your tokenizer may differ, but the order of magnitude holds.
+
+A 45-minute tech talk can be tens of thousands of tokens. You cannot embed it whole and get a single faithful vector. The naive fix is **chunking**: slice the transcript, embed each slice, store many vectors per video. That solves the window problem and creates two new ones. You inflate the index (storage and ANN search cost), and you dilute semantics — retrieval returns mid-talk fragments and filler, not "what was this video about?"
+
+YouTube is a different story from arXiv for that reason, not only because transcripts are messy. A raw transcript is a sprawling, repetitive stream of speech. Chunk it verbatim and you multiply low-signal vectors across the store.
+
+Take the 3Blue1Brown neural-networks intro in my corpus (`aircAruvnKk`). The cached transcript alone is **12,000 characters** — on the order of **thousands of tokens** — and it opens like this:
+
+> This is a 3. It's sloppily written and rendered at an extremely low resolution of 28x28 pixels, but your brain has no trouble recognizing it as a 3. And I want you to take a moment to appreciate how crazy it is that brains can do this so effortlessly.
+
+Fine prose for a human. A poor fit for **one** embedding of the full talk. Even the first **3,000 characters** I pass into the compressor (`transcript_embed_max` in `fetch.py`) is already hundreds of tokens — before summarization, before the embedder ever sees the text.
+
+I needed a different architecture. Summarize first, embed second. **Compress-then-Embed**.
 
 ## The `text-compressor` Experiment
 
-The hypothesis: use a cheap, fast instruct model to read the sprawling source text and generate a dense, 2-4 sentence prose summary. Then, embed *that* summary. If it works, you get a smaller, higher-signal vector space.
+The hypothesis: use a cheap instruct model to read the sprawling source text and generate a dense, 2–4 sentence prose summary (`short_summary` in `prompts.yaml`). Then embed *that* summary — one vector, entire gist inside the embedder's context. If it works, you get a smaller index and higher-signal retrieval than chunking raw speech.
 
 But in software architecture, you must protect your core domain from unproven hypotheses. If I wired this experimental compression logic directly into ArticleRecommender's ingest pipeline, I would be coupling my production system to a volatile, untested LLM workflow.
 
 So I split it out. I created **`text-compressor`** as a standalone repository.
 
-By isolating the experiment, I could iterate without dragging the main app along. I built a fixed corpus of 12 arXiv papers and 10 YouTube videos. I set up a pipeline to fetch the raw data, compress it via Agno and OpenRouter, and output the results to JSONL.
+By isolating the experiment, I could iterate without dragging the main app along. I built a fixed corpus in `corpus.json`: **12 arXiv papers** and **10 YouTube videos** — tutorials, lectures, podcasts, music, short clips — so compression would see more than one genre. I set up a pipeline to fetch raw text, compress it via Agno and OpenRouter, and write per-item results to `items.jsonl`.
+
+## What the Inputs Actually Look Like
+
+Not every corpus item presents the same shape to the compressor.
+
+| Source | Example | Raw size | Fed to LLM |
+|--------|---------|----------|------------|
+| arXiv abstract | Attention (`1706.03762`) | ~1,180 chars | full abstract |
+| Long YouTube transcript | 3Blue1Brown (`aircAruvnKk`) | 12,000 chars cached | **first 3,000 chars** of transcript (`transcript_embed_max` in `fetch.py`) |
+| Short YouTube clip | *Me at the zoo* (`jNQXAC9IVRw`) | 217 chars | skipped when `min_compress_chars=1000` |
+| Missing captions | HF Transformers intro (`WUvTyaaWZZc`) | 0 chars | nothing to compress |
+
+That table mattered early. YouTube is the product pain; arXiv is the cheap control case. Several videos in the corpus have **no transcript at all** in `data/raw/youtube/` — a reminder that ingest pipelines fail quietly on missing captions, not just on bad summaries.
+
+## A Real Compression (Before I Had Faithfulness Metrics)
+
+My first scored compare runs used eight arXiv papers (`run_compare.py --limit 8`) before I ran the full 22-item corpus with YouTube. The mechanics are the same regardless of source kind: `source_text` in, 2–4 sentences out.
+
+Here is Attention (`1706.03762`) compressed with `openai/gpt-oss-120b:free`:
+
+**In** (1,180 chars, 230 tokens — excerpt from `source_text`):
+
+> We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. … Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task … 41.8 after training for 3.5 days on eight GPUs …
+
+**Out** (476 chars, 85 tokens — **compression ratio 0.40**):
+
+> The paper introduces the Transformer, a neural architecture that relies exclusively on attention mechanisms and eliminates recurrence and convolution. It achieves state-of-the-art machine‑translation results, reaching 28.4 BLEU on English‑German and 41.8 BLEU on English‑French while training much faster and with greater parallelism. The authors also demonstrate the model's versatility by applying it successfully to English constituency parsing across different data sizes.
+
+Across that eight-paper run, average ratio was **0.46** — less than half the character bulk, roughly **8 seconds** of OpenRouter latency per document. The sizing win was concrete: **85 tokens** out, well inside a 512-token embedder window (let alone an 8k one). One row in `pgvector`, one vector that represents the whole document's gist.
+
+Semantic search alone would not carry product names reliably. Phase 1 already had `tsvector` for keyword-style matches. I also planned **entity extraction** on ingest — salient names like Pinecone or GraphRAG indexed for lookup and investigation even when the summary vector only captures topical similarity. Compression and entities are complementary: the summary fits the embedder; the entities preserve handles compression might drop. Proving both paths would take the rest of this series.
+
+ArticleRecommender does not yet pin a production embedder model in this series; summaries are sized to fit **≤512-token** bi-encoders (and comfortably inside 8k API models). When ingest wires up, the contract is: **one summary vector per document, entire text inside the embedder window.**
+
+**YouTube faithfulness is still an open gate.** The scored compare runs in this chapter used eight arXiv abstracts; the 22-item corpus includes ten YouTube transcripts, but I have not published a faithfulness scorecard row for a long talk yet. ArXiv proved the mechanics; YouTube is the product-shaped stress test ([Part 3](./03-overlap-is-not-faithfulness.md)).
+
+It is not the whole story.
 
 ## The Friction of the Real World
 
 The moment you move from a Python script to a pipeline, the real world hits you.
 
-First, **API churn**. I relied on OpenRouter's `:free` models for cheap, bulk compression. But free endpoints retire silently. Your pipeline doesn't fail with a polite deprecation warning; it fails with a hard `No endpoints found`. I had to build in model fallbacks and CLI overrides just to keep the pipeline breathing.
+**API churn.** I relied on OpenRouter's `:free` models for cheap bulk compression. Free endpoints retire without a deprecation calendar. When a model id goes stale, the failure mode is blunt: `No endpoints found for …:free` (documented in the repo README). You swap the model id or pass `--model` and move on.
 
-Second, **The Asymmetry of Data**. Not everything needs compression. If an article is only 800 characters long, asking an LLM to summarize it is a waste of time and money, and often degrades the text. I introduced a `min_compress_chars` threshold (set to 1000 in `run.py`). But if you skip compression for short texts, how do you handle that in your evaluation metrics without skewing the averages? I had to explicitly log skipped rows so they wouldn't artificially inflate my success rate.
+I also learned that "free" is not interchangeable. In the same compare run, `openrouter/free` returned **empty summaries** for Attention and ResNet — `compress_error: "model returned empty summary"` — while `openai/gpt-oss-120b:free` produced usable text on the same inputs. Two `:free` routes; one usable batch, one with two silent holes. I kept `gpt-oss-120b:free` as the default in `corpus.json` and treated model choice as operational config, not a one-time setup step.
 
-I built the pipeline. I proved I could compress the text. But as I looked at the generated summaries, a cold realization set in. They *read* beautifully. They sounded authoritative.
+**The asymmetry of data.** Not everything should hit the LLM. `run.py` defaults to `--min-compress-chars 1000`: sources shorter than that pass through uncompressed (`compression_skipped: true` in `items.jsonl`). *Me at the zoo* at 217 characters should not be "summarized." A 1,578-character music video transcript might barely qualify; a 12,000-character tutorial definitely does.
 
-But were they true? Did they actually retain the technical facts from the original transcript?
+But skipping compression creates an evaluation trap: if you average faithfulness only over compressed rows, you mislead yourself. The evaluator has to log skipped items separately (`eval_skipped` in `metrics.json`) so they do not inflate success rates. Compare runs set `min_compress_chars` to **0** so every item hits the model fairly — production runs use the threshold.
+
+I built the pipeline. I proved I could shrink text by half on demand. But as I read the generated summaries, a cold realization set in. They *read* beautifully. They sounded authoritative.
+
+Were they true? Did they actually retain the technical facts from the original transcript — or even from the first 3,000 characters I had fed the model?
 
 I had no defensible answer. And in engineering, if you cannot tell whether a result is faithful, you do not have an architecture yet. You have a demo.
+
+## Takeaways
+
+- **Embedder window, not index size** — One vector per document only works when the source fits the model's token cap (often 512–8k). Long transcripts force chunking (many noisy vectors) or compression (one gist vector).
+- **Compress-then-embed** — Summarize first, embed second: ~85-token summaries fit entirely in the embedder context and keep one row per document in `pgvector`. That is a sizing win, not a faithfulness guarantee.
+- **Hybrid retrieval** — Semantic vectors handle topical similarity; `tsvector` and extracted entities handle product names and exact handles a summary may drop. Plan for both, not either/or.
+- **Pipeline ops** — Free OpenRouter model ids retire; empty summaries happen; skip thresholds (`min_compress_chars`) must be logged in evaluation so averages do not lie.
+- **Demo vs architecture** — If you cannot measure whether compression preserved the facts, you have a demo. The scorecard comes next.
+
+## The Evidence
+
+- **Compare run:** `text-compressor/results/compare-20260524T225903Z/` (`openai/gpt-oss-120b:free`, eight arXiv papers)
+- **Repo:** [marfago-labs/text-compressor](https://github.com/marfago-labs/text-compressor)
 
 **Previous:** [The Minimum Credible Loop](./01-i-didnt-want-another-bookmark-app.md) · **Next:** [ModernBERT and the Overlap Trap](./03-overlap-is-not-faithfulness.md)

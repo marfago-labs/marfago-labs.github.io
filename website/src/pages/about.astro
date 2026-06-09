@@ -1,10 +1,16 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { sitePageMeta } from "../data/site-pages";
+
+const meta = sitePageMeta.about;
 ---
 
 <BaseLayout
   title="About"
   description="Marco Fago — principal AI engineer, Dublin."
+  version={meta.version}
+  published={meta.published}
+  lastUpdated={meta.lastUpdated}
 >
   <div class="prose">
     <h1>About</h1>
@@ -17,6 +23,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       theme in this lab: <strong>you cannot architect on vibes</strong> — you
       need gold data, benchmarks, and falsifiable checks before production
       patterns earn trust.
+    </p>
+    <p>
+      The shift I care about: <strong>natural language is the new interface to the
+      system</strong> — specs, constraints, context. The implementation is
+      generated, revised, and discarded. What compounds is whether the
+      <em>intent</em> stayed true and whether you can <em>prove</em> it.
+      <strong>Code is cheap now; judgment isn't.</strong>
     </p>
 
     <h2>How I work</h2>
