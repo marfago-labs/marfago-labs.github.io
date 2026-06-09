@@ -1,0 +1,39 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  order: number;
+}
+
+const { title, description, date, order } = Astro.props;
+const formatted = date.toLocaleDateString("en-IE", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<BaseLayout title={title} description={description}>
+  <article class="prose">
+    <p class="muted meta">
+      {order === 0 ? "Series index" : `Part ${order}`} · {formatted}
+    </p>
+    <slot />
+    <hr />
+    <p><a href="/blog/">← All posts</a></p>
+  </article>
+</BaseLayout>
+
+<style>
+  .meta {
+    margin-bottom: 0.5rem;
+  }
+  hr {
+    margin: 2.5rem 0 1rem;
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+</style>

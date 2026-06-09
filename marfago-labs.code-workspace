@@ -1,0 +1,11 @@
+{
+  "folders": [
+    { "name": "marfago-labs", "path": "." },
+    { "name": "ArticleRecommender", "path": "ArticleRecommender" },
+    { "name": "text-compressor", "path": "text-compressor" },
+    { "name": "ner-gold-generator", "path": "ner-gold-generator" },
+    { "name": "ner-dataset", "path": "ner-dataset" },
+    { "name": "ner-detector", "path": "ner-detector" }
+  ],
+  "settings": {}
+}

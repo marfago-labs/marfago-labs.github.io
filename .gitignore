@@ -1,0 +1,20 @@
+# Nested project repos (each has its own git history)
+ArticleRecommender/
+text-compressor/
+ner-gold-generator/
+ner-dataset/
+ner-detector/
+
+# GitHub org/profile scaffolding (local push helpers)
+.github-repo/
+.github-repo-push/
+.github-profile/
+org-profile/
+
+# Website build artifacts
+website/node_modules/
+website/dist/
+website/.astro/
+
+# Cursor local
+.cursor/

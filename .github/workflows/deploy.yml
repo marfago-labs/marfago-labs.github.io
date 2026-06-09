@@ -1,0 +1,55 @@
+# Org hub at https://marfago-labs.github.io/ — requires blog/ + website/ at repo root.
+name: Deploy org site (Pages)
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - ".github/workflows/deploy.yml"
+      - "website/**"
+      - "blog/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: org-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+
+      - name: Verify blog source for sync
+        run: test -d blog/posts && test "$(ls -1 blog/posts/*.md 2>/dev/null | wc -l)" -gt 0
+
+      - name: Install and build
+        working-directory: website
+        run: |
+          npm ci
+          npm run build
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: website/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

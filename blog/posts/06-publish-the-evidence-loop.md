@@ -1,0 +1,65 @@
+---
+title: "Publishing the Evidence"
+slug: publish-the-evidence-loop
+series: marfago-labs-origin
+order: 6
+date: 2026-06-08
+description: Separating the generator from ner-dataset. CI validation, live stats, and closing the loop.
+---
+
+# Publishing the Evidence
+
+In engineering, good intentions don't work. Mechanisms do.
+
+You can claim your NER pipeline is highly accurate. You can show a slick demo of it extracting entities from a YouTube video. But if you cannot provide the dataset, the evaluation harness, and the exact metrics used to prove that claim, you are doing marketing, not engineering.
+
+One of the core tenets of marfago-labs is: **No metric, no merit.** Private benchmarks are theatre. I had to make the evidence public.
+
+## The Artifact: `ner-dataset`
+
+I explicitly separated the generation code (`ner-gold-generator`) from the output data. I created **`ner-dataset`** as a standalone, versioned repository.
+
+Generation is a messy, chaotic process involving API keys, rate limits, and LLM retries. The dataset repository, by contrast, is intentionally boring. It contains the final JSONL files: ten manual arXiv rows, and five synthetic datasets of 100 rows each (news, blogs, transcripts, scientific abstracts, and mixed).
+
+I built a CI pipeline that runs on every pull request to validate the integrity of the spans. If a character offset is wrong, the build fails. A script regenerates a live statistics dashboard at [marfago-labs.github.io/ner-dataset](https://marfago-labs.github.io/ner-dataset/) that tracks lexical diversity and entity usage.
+
+It is not just a file dump; it is a living, audited artifact.
+
+## Closing the Loop
+
+With the dataset published, the evaluation loop was complete:
+
+1. **Generate:** `ner-gold-generator` creates span-valid JSONL.
+2. **Publish:** `ner-dataset` versions and validates the data.
+3. **Benchmark:** `ner-detector` consumes that exact public dataset to run its backends.
+4. **Report:** CI generates an HTML report and publishes it to GitHub Pages.
+
+I made the system *agent-legible*. I wrote `for-agents.md` files and offline smoke scripts. This isn't just documentation; it is an interface. If another engineer—or their coding agent—disagrees with my benchmark, the mechanism exists for them to fork the repo, swap the model, and prove me wrong.
+
+Make disagreement cheap.
+
+## The Reality of the Numbers
+
+When I ran the full loop, the numbers told the truth I needed to hear.
+
+On synthetic news, the LLM achieved ~84% Doc F1, but cost 7 seconds per document. BERT achieved ~73% Doc F1 in 80 milliseconds. But on sparse scientific abstracts, the LLM's accuracy dropped to ~47%.
+
+There is no magic model. There is only routing based on measured trade-offs.
+
+## Back to the Beginning
+
+I started this journey because I wanted ArticleRecommender to synthesize my reading list. I ended up building an open-source AI evaluation lab.
+
+ArticleRecommender is still the north star. Phase 1 works. But now, as I move toward Phase 2—autonomous search, enrichment pipelines, compress-then-embed ingestion—I'm not guessing. I know which NER backend to route to based on latency budgets. I know which metrics to trust when evaluating a summary.
+
+I stopped building the illusion of AI, and started engineering the reality.
+
+**Previous:** [Fixing LLM Offset Hallucinations](./05-entity-first-gold.md) · **Next:** [Agents Draft. I Sign.](./07-agents-draft-i-sign.md)
+
+***
+
+## The Evidence
+
+- **Dataset Stats:** [marfago-labs.github.io/ner-dataset](https://marfago-labs.github.io/ner-dataset/)
+- **Benchmark Report:** [marfago-labs.github.io/ner-detector](https://marfago-labs.github.io/ner-detector/)
+- **The Code:** [ner-gold-generator](https://github.com/marfago-labs/ner-gold-generator) · [ner-dataset](https://github.com/marfago-labs/ner-dataset) · [ner-detector](https://github.com/marfago-labs/ner-detector)

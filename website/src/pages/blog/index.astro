@@ -1,0 +1,72 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { postSlug } from "../../lib/blog";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<BaseLayout
+  title="Blog"
+  description="Building an Evaluation Lab by Accident — engineering narrative from marfago-labs."
+>
+  <div class="prose-wide">
+    <h1>Blog</h1>
+    <p class="lead">
+      Stories about problems, tradeoffs, and measured outcomes — not changelogs.
+    </p>
+
+    <ul class="post-list">
+      {
+        posts.map((post) => (
+          <li>
+            <article class="post-item">
+              <p class="muted meta">
+                {post.data.order === 0 ? "Series" : `Part ${post.data.order}`}
+                ·{" "}
+                {post.data.date.toLocaleDateString("en-IE", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </p>
+              <h2>
+                <a href={`/blog/${postSlug(post.id)}/`}>{post.data.title}</a>
+              </h2>
+              <p>{post.data.description}</p>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0 0;
+  }
+  .post-item {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .post-item h2 {
+    margin: 0.25rem 0 0.5rem;
+    font-size: 1.35rem;
+  }
+  .post-item h2 a {
+    text-decoration: none;
+    color: var(--text);
+  }
+  .post-item h2 a:hover {
+    color: var(--accent);
+  }
+  .meta {
+    margin: 0;
+    font-size: 0.85rem;
+  }
+</style>

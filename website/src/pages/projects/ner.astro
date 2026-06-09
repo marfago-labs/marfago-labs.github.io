@@ -1,0 +1,72 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="NER evaluation pipeline"
+  description="Gold generation, validated datasets, and backend benchmarks."
+>
+  <div class="prose">
+    <p class="muted"><a href="/projects/">← Projects</a></p>
+    <h1>NER evaluation pipeline</h1>
+    <p class="lead">
+      A production-style path from gold generation to benchmark-ready datasets
+      to measured backend comparison — built because I could not trust NER
+      quality without numbers.
+    </p>
+
+    <div class="pipeline card">
+      <code>ner-gold-generator</code> → <code>ner-dataset</code> →
+      <code>ner-detector</code>
+    </div>
+
+    <h2>Hard problems</h2>
+    <ul>
+      <li>LLM span offsets hallucinate — entity-first planning + deterministic anchoring</li>
+      <li>Strict vs relaxed F1 disagree on salient gold — Doc F1 as primary metric</li>
+      <li>LLM quality vs BERT latency — measured per document, not assumed</li>
+    </ul>
+
+    <h2>Engineering bar</h2>
+    <ul>
+      <li>≥95% test coverage, typed Python, pre-commit, Gitleaks in CI</li>
+      <li>Gold JSONL validated on every PR (exact spans, unique anchoring)</li>
+      <li>YAML-driven benchmarks; HTML reports from CI</li>
+    </ul>
+
+    <h2>Live evidence</h2>
+    <p>Published by repo workflows — open these for full interactive reports.</p>
+    <ul>
+      <li>
+        <a href="https://marfago-labs.github.io/ner-dataset/" target="_blank" rel="noopener">
+          Dataset quality dashboard ↗
+        </a>
+      </li>
+      <li>
+        <a href="https://marfago-labs.github.io/ner-detector/" target="_blank" rel="noopener">
+          NER backend benchmark report ↗
+        </a>
+      </li>
+    </ul>
+
+    <h2>Repos</h2>
+    <ul>
+      <li><a href="https://github.com/marfago-labs/ner-gold-generator">ner-gold-generator</a></li>
+      <li><a href="https://github.com/marfago-labs/ner-dataset">ner-dataset</a></li>
+      <li><a href="https://github.com/marfago-labs/ner-detector">ner-detector</a></li>
+    </ul>
+
+    <h2>Story</h2>
+    <p>
+      Read the full arc in
+      <a href="/blog/series-index/">Building an Evaluation Lab by Accident</a>.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .pipeline {
+    font-size: 0.95rem;
+    margin: 1.5rem 0;
+  }
+</style>
