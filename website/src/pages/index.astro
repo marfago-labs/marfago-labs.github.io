@@ -1,98 +1,226 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageMetaRow from "../components/PageMetaRow.astro";
+import { getCollection } from "astro:content";
 import { evidenceLinks } from "../data/projects";
 import { sitePageMeta } from "../data/site-pages";
+import { postSlug } from "../lib/blog";
+import { formatReadingTime, pageReadingLabel, readingMinutes } from "../lib/readingTime";
 
 const meta = sitePageMeta.home;
 
+const blogPosts = await getCollection("blog");
+const readingTimeBySlug = new Map(
+  blogPosts.map((post) => [postSlug(post.id), readingMinutes(post.body)]),
+);
+
+function readingLabelForHref(href: string): string {
+  const slug = href.replace(/^\/blog\/|\/$/g, "");
+  const minutes = readingTimeBySlug.get(slug);
+  return minutes ? formatReadingTime(minutes) : "";
+}
+
+function withReadingLabel(prefix: string, href: string): string {
+  const reading = readingLabelForHref(href);
+  return reading ? `${prefix} · ${reading}` : prefix;
+}
+
 const arcSteps = [
   {
-    label: "North star",
-    title: "ArticleRecommender Phase 1",
+    label: "Act I · The Illusion",
+    title: "The Minimum Credible Loop",
+    blurb:
+      "I wanted a tech briefing app, not bookmarks. Phase 1 worked — the smart part still needed proof.",
     href: "/blog/i-didnt-want-another-bookmark-app/",
+    cover: "/blog/covers/i-didnt-want-another-bookmark-app.png",
+    coverAlt: "A tight teal loop through document, storage, and search.",
   },
   {
-    label: "Compression",
-    title: "Compress-then-embed",
-    href: "/blog/compress-then-embed/",
+    label: "Act II · The Reality Check",
+    title: "ModernBERT and the Overlap Trap",
+    blurb:
+      "Similarity scored 0.91 and looked like a pass. Four other checks on the same rows disagreed.",
+    href: "/blog/overlap-is-not-faithfulness/",
+    cover: "/blog/covers/overlap-is-not-faithfulness.png",
+    coverAlt: "Two overlapping circles beside a scorecard — overlap is not faithfulness.",
   },
   {
-    label: "NER",
-    title: "Backend benchmarks",
-    href: "/blog/picking-a-ner-backend/",
+    label: "Act III · The Infrastructure",
+    title: "Fixing LLM Offset Hallucinations",
+    blurb:
+      "Benchmarks need gold data. LLMs write prose well and count characters badly — I inverted the pipeline.",
+    href: "/blog/entity-first-gold/",
+    cover: "/blog/covers/entity-first-gold.png",
+    coverAlt: "Structured data flowing into a document with highlighted spans.",
   },
   {
-    label: "Evidence",
-    title: "Published gold & CI",
-    href: "/blog/publish-the-evidence-loop/",
+    label: "Act IV · How I work with agents",
+    title: "Agents Draft. I Sign.",
+    blurb:
+      "Walk the problem with agents first, then constrain output with tests and public evidence.",
+    href: "/blog/agents-draft-i-sign/",
+    cover: "/blog/covers/agents-draft-i-sign.png",
+    coverAlt: "A winding teal path through a stylized map — explore before you build.",
   },
 ];
+
+const standalonePosts = [
+  {
+    title: "Specs Drive. Tests Validate.",
+    blurb: "User stories and SDD set intent; unit, integration, E2E, and lifecycle matrices prove it.",
+    href: "/blog/specs-drive-tests-validate/",
+    cover: "/blog/covers/specs-drive-tests-validate.png",
+    coverAlt: "Specification document flowing into a validated test pyramid.",
+  },
+  {
+    title: "Become an AQ Engineer",
+    blurb: "Grade server-owned progress and scenario contracts — not chat prose alone.",
+    href: "/blog/aq-better-ai-engineer/",
+    cover: "/blog/covers/aq-better-ai-engineer.png",
+    coverAlt: "Chat on the left, progress checklist on the right, parity checkpoint below.",
+  },
+];
+
+const homeReadingSource = [
+  "I couldn't trust my own recommender pipeline.",
+  "I was building a way to ingest arXiv and YouTube and hand myself a briefing.",
+  "Each act is one failure mode I hit while trying to ship ArticleRecommender.",
+  "Standalone posts on shipping agent-written software I can actually sign off on.",
+  "Proof, not vibes.",
+  "Where to go next. The four acts are one arc; standalone posts go deeper on specs, tests, and AQ.",
+  ...arcSteps.map((step) => `${step.title}. ${step.blurb}`),
+  ...standalonePosts.map((post) => `${post.title}. ${post.blurb}`),
+].join(" ");
+const homeMetaLabel = pageReadingLabel("Home", homeReadingSource);
 ---
 
 <BaseLayout
   title="marfago labs"
-  description="Building an evaluation lab by accident — measurement, gold data, and public benchmarks before agentic ingest ships."
-  version={meta.version}
-  published={meta.published}
-  lastUpdated={meta.lastUpdated}
+  description="Open-source evaluation lab — gold data, benchmarks, and public evidence before agentic ingest ships."
 >
   <div class="page-content hero">
-    <p class="eyebrow">Evaluation-first AI engineering · Marco Fago · Dublin</p>
+    <PageMetaRow
+      label={homeMetaLabel}
+      version={meta.version}
+      published={meta.published}
+      lastUpdated={meta.lastUpdated}
+      tightBelow={true}
+    />
+    <figure class="hero-cover">
+      <img
+        src="/blog/covers/home.png"
+        alt="A teal pipeline paused at a measurement checkpoint — trust before ship."
+        width="1200"
+        height="675"
+        loading="eager"
+      />
+    </figure>
     <h1>I couldn't trust my own recommender pipeline.</h1>
     <p class="lead">
-      I wanted a personal intelligence platform — ingest arXiv papers and YouTube
-      talks, extract technologies worth investigating (Pinecone, GraphRAG, …),
-      connect the sources, and hand me a briefing. Phase 1 worked: save, chat,
-      search. Phase 2 needed compression, embeddings, and entity extraction —
-      and every step <em>looked</em> fine until I tried to measure it.
+      I was building a way to ingest arXiv and YouTube and hand myself a briefing.
+      The demos looked fine. I had no way to know the summaries were true — or which
+      NER backend to trust, or whether my gold data was valid.
     </p>
-    <p>
-      <strong>marfago-labs</strong> is the evaluation lab I had to build first:
-      repos, gold data, benchmarks, and CI-published reports — so agent-assisted
-      code does not outrun human judgment. The blog series
+    <p class="proof-hook">
+      <strong>marfago-labs</strong> is what I built instead: repos, gold data, benchmarks,
+      and CI-published reports. The blog series
       <a href="/blog/series-index/">Building an Evaluation Lab by Accident</a>
-      is the architectural story; this site links the live numbers.
+      tells the story; this site links the artifacts.
     </p>
 
     <div class="hero-actions">
-      <a class="button" href="/blog/series-index/">Start with the series</a>
-      <a class="button button--ghost" href="/projects/ner/">See live benchmarks</a>
+      <a class="button" href="/blog/series-index/">Read the series</a>
+      <a class="button button--ghost" href="/projects/ner/">NER pipeline</a>
+      <a class="button button--ghost" href="/blog/">All posts</a>
     </div>
   </div>
 
   <section class="section page-content">
-    <h2>The arc</h2>
-    <p class="muted">
-      Product blocked on measurement — each chapter is one failure mode turned into
-      a mechanism.
+    <h2>The story in four acts</h2>
+    <p class="section-intro">
+      Each act is one failure mode I hit while trying to ship ArticleRecommender — and
+      the mechanism I built to answer it.
     </p>
-    <ol class="arc">
+    <ul class="story-grid">
       {
         arcSteps.map((step) => (
-          <li class="arc-step">
-            <span class="arc-label">{step.label}</span>
-            <a href={step.href}>{step.title}</a>
+          <li>
+            <a class="story-card" href={step.href}>
+              <span class="story-thumb">
+                <img
+                  src={step.cover}
+                  alt={step.coverAlt}
+                  width="320"
+                  height="180"
+                  loading="lazy"
+                />
+              </span>
+              <span class="story-body">
+                <span class="story-label">{withReadingLabel(step.label, step.href)}</span>
+                <span class="story-title">{step.title}</span>
+                <span class="story-blurb">{step.blurb}</span>
+              </span>
+            </a>
           </li>
         ))
       }
-    </ol>
-    <p class="muted arc-note">
-      Capstone:
-      <a href="/blog/agents-draft-i-sign/">Agents Draft. I Sign.</a>
-      — walk, loop, sign.
+    </ul>
+  </section>
+
+  <section class="section page-content">
+    <h2>Beyond the series</h2>
+    <p class="section-intro">
+      Standalone posts on shipping agent-written software I can actually sign off on.
     </p>
+    <ul class="story-grid story-grid--two">
+      {
+        standalonePosts.map((post) => {
+          const readingLabel = readingLabelForHref(post.href);
+          return (
+          <li>
+            <a class="story-card" href={post.href}>
+              <span class="story-thumb">
+                <img
+                  src={post.cover}
+                  alt={post.coverAlt}
+                  width="320"
+                  height="180"
+                  loading="lazy"
+                />
+              </span>
+              <span class="story-body">
+                {readingLabel && <span class="story-label">{readingLabel}</span>}
+                <span class="story-title">{post.title}</span>
+                <span class="story-blurb">{post.blurb}</span>
+              </span>
+            </a>
+          </li>
+          );
+        })
+      }
+    </ul>
   </section>
 
   <section class="section">
-    <h2>Live evidence</h2>
-    <p class="muted page-content">
-      Repo CI publishes these dashboards — the org site links out, never duplicates.
-      Read the series first if you want to know <em>why</em> these exist.
-    </p>
-    <div class="card-grid">
+    <h2 class="page-content">Proof, not vibes</h2>
+    <div class="card-grid page-content">
+      <a class="card card-link card-link--proof" href="/blog/overlap-is-not-faithfulness/">
+        <p class="card-kicker">From the blog</p>
+        <h3>When 0.91 was not a pass</h3>
+        <p class="card-question">
+          ModernBERT F1 near 0.91 on compression summaries — until entity, numeric,
+          and NLI checks disagreed on the same rows.
+        </p>
+      </a>
       {
         evidenceLinks.map((item) => (
-          <a class="card card-link" href={item.href} target="_blank" rel="noopener">
+          <a
+            class="card card-link"
+            href={item.href}
+            {...(item.href.startsWith("http")
+              ? { target: "_blank", rel: "noopener" }
+              : {})}
+          >
             <h3>{item.title}</h3>
             <p class="card-question">{item.question}</p>
             <p class="muted">{item.source}</p>
@@ -102,41 +230,39 @@ const arcSteps = [
     </div>
   </section>
 
-  <section class="section page-content">
-    <h2>Tenets</h2>
-    <p class="muted"><em>Not slogans — tradeoffs I argue for in design review.</em></p>
-    <ol class="tenets">
-      <li>
-        <strong>No metric, no merit.</strong> Claims need benchmarks, gold data,
-        falsifiable checks.
-        <span class="even-over">Even over momentum.</span>
-      </li>
-      <li>
-        <strong>Orchestrate, never abdicate.</strong> Agents plan and draft; I own
-        failure modes and the signature at the bottom.
-      </li>
-      <li>
-        <strong>Build only what earns trust.</strong> If I would not rely on it
-        under scrutiny, it is not done.
-      </li>
-    </ol>
-    <p class="muted">
-      Full principles and background —
-      <a href="/about/">About</a>.
-      Manifesto line I keep in mind:
-      <strong>code is cheap now; judgment isn't.</strong>
+  <section class="section page-content closing">
+    <h2>Where to go next</h2>
+    <p class="section-intro">
+      The four acts are one arc — illusion, reality check, infrastructure, then how I
+      work with agents. Standalone posts go deeper on specs, tests, and AQ. The operating
+      model — walk, loop, sign — is in <a href="/blog/agents-draft-i-sign/">Act IV</a>;
+      the full write-up is on <a href="/about/">About</a>.
     </p>
+    <div class="hero-actions closing-actions">
+      <a class="button" href="/blog/series-index/">Read the series</a>
+      <a class="button button--ghost" href="/blog/agents-draft-i-sign/">Act IV · Agents Draft. I Sign.</a>
+      <a class="button button--ghost" href="/about/">How I work</a>
+    </div>
   </section>
 </BaseLayout>
 
 <style>
-  .eyebrow {
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    margin: 0 0 0.75rem;
-    font-weight: 600;
+  .hero-cover {
+    margin: 0 0 0.5rem;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 20px rgba(26, 26, 24, 0.06);
+  }
+  .hero-cover img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .proof-hook {
+    margin-top: 1rem;
   }
   .hero-actions {
     display: flex;
@@ -174,40 +300,89 @@ const arcSteps = [
   .section > h2 {
     margin-bottom: 0.35rem;
   }
-  .arc {
+  .section-intro {
+    color: var(--muted);
+    margin: 0 0 1.25rem;
+    max-width: 38rem;
+  }
+  .story-grid {
     list-style: none;
     padding: 0;
-    margin: 1rem 0 0.75rem;
+    margin: 0;
     display: grid;
-    gap: 0.65rem;
+    gap: 1rem;
   }
   @media (min-width: 640px) {
-    .arc {
+    .story-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .story-grid--two {
       grid-template-columns: repeat(2, 1fr);
     }
   }
-  .arc-step {
-    margin: 0;
-    padding: 0.85rem 1rem;
+  .story-card {
+    display: flex;
+    gap: 1rem;
+    padding: 0.85rem;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     background: var(--surface, #faf8f4);
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+    transition: border-color 0.15s;
   }
-  .arc-label {
+  .story-card:hover {
+    border-color: var(--accent);
+  }
+  .story-thumb {
+    flex: 0 0 5.5rem;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    align-self: flex-start;
+  }
+  .story-thumb img {
     display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+  .story-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+  .story-label {
     font-size: 0.72rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     color: var(--muted);
-    margin-bottom: 0.25rem;
   }
-  .arc-step a {
-    font-weight: 500;
+  .story-title {
+    font-weight: 600;
+    font-size: 0.98rem;
+    color: var(--text);
   }
-  .arc-note {
-    margin: 0.5rem 0 0;
-    font-size: 0.92rem;
+  .story-card:hover .story-title {
+    color: var(--accent);
+  }
+  .story-blurb {
+    font-size: 0.88rem;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+  @media (max-width: 480px) {
+    .story-card {
+      flex-direction: column;
+    }
+    .story-thumb {
+      flex-basis: auto;
+      max-width: 100%;
+    }
   }
   .card-link {
     text-decoration: none;
@@ -222,20 +397,24 @@ const arcSteps = [
     font-size: 1.05rem;
     color: var(--accent);
   }
+  .card-kicker {
+    margin: 0 0 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+  .card-link--proof h3 {
+    color: var(--text);
+  }
   .card-question {
     margin: 0 0 0.5rem;
     font-size: 0.95rem;
     line-height: 1.45;
     color: var(--text, inherit);
   }
-  .tenets li {
-    margin-bottom: 1rem;
-  }
-  .even-over {
-    display: block;
-    font-style: italic;
-    color: var(--muted);
-    font-size: 0.92rem;
+  .closing-actions {
     margin-top: 0.25rem;
   }
 </style>

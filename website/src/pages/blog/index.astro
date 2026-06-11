@@ -1,77 +1,163 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageMetaRow from "../../components/PageMetaRow.astro";
 import { getCollection } from "astro:content";
-import { postSlug } from "../../lib/blog";
+import { getActLabel, partitionBlogPosts, postSlug } from "../../lib/blog";
 import { formatPageStamp } from "../../lib/pageMeta";
+import { formatReadingTime, pageReadingLabel, readingMinutes } from "../../lib/readingTime";
 import { sitePageMeta } from "../../data/site-pages";
 
-const posts = (await getCollection("blog")).sort(
-  (a, b) => a.data.order - b.data.order,
-);
+const allPosts = await getCollection("blog");
+const { series: seriesPosts, standalone: standalonePosts } =
+  partitionBlogPosts(allPosts);
 const meta = sitePageMeta.blog;
+
+const blogReadingSource = [
+  "I wanted a tech briefing app. I ended up building open-source tools to measure whether the AI parts actually work.",
+  "Posts and diagrams are drafted with Cursor, then edited and fact-checked against the repos and benchmarks cited.",
+  ...allPosts.map((post) => `${post.data.title}. ${post.data.description}`),
+].join(" ");
+const blogMetaLabel = pageReadingLabel("Blog", blogReadingSource);
 ---
 
 <BaseLayout
   title="Blog"
   description="Building an Evaluation Lab by Accident — engineering narrative from marfago-labs."
-  version={meta.version}
-  published={meta.published}
-  lastUpdated={meta.lastUpdated}
 >
   <div class="prose-wide">
-    <h1>Blog</h1>
-    <p class="lead">
-      How a recommender MVP forced an evaluation lab — problems, tradeoffs, and
-      measured outcomes, not changelogs. Start with
-      <a href="/blog/series-index/">Building an Evaluation Lab by Accident</a>.
+    <div class="blog-hero">
+      <PageMetaRow
+        label={blogMetaLabel}
+        version={meta.version}
+        published={meta.published}
+        lastUpdated={meta.lastUpdated}
+      />
+      <h1>Blog</h1>
+      <p class="lead">
+        I wanted a tech briefing app. I ended up building open-source tools to measure whether the AI parts actually work. Four acts: the product, the metric traps, the infrastructure, and the operating model. Start with
+        <a href="/blog/series-index/">Building an Evaluation Lab by Accident</a>.
+      </p>
+      <p class="muted blog-process">
+        Posts and diagrams are drafted with <a href="https://cursor.com">Cursor</a>,
+        then edited and fact-checked against the repos and benchmarks cited.
+      Same loop as the code: agents propose, I sign.
     </p>
+    </div>
 
-    <ul class="post-list">
-      {
-        posts.map((post) => (
-          <li>
-            <article class="post-item">
-              {
-                post.data.cover && (
-                  <a class="post-thumb" href={`/blog/${postSlug(post.id)}/`}>
-                    <img
-                      src={post.data.cover}
-                      alt={post.data.coverAlt ?? post.data.title}
-                      width="320"
-                      height="180"
-                      loading="lazy"
-                    />
-                  </a>
-                )
-              }
-              <div class="post-body">
-              <p class="muted meta">
-                {post.data.order === 0 ? "Series" : `Part ${post.data.order}`}
-                ·{" "}
-                {formatPageStamp({
-                  version: post.data.version,
-                  published: post.data.date,
-                  lastUpdated: post.data.lastUpdated,
-                })}
-              </p>
-              <h2>
-                <a href={`/blog/${postSlug(post.id)}/`}>{post.data.title}</a>
-              </h2>
-              <p>{post.data.description}</p>
-              </div>
-            </article>
-          </li>
-        ))
-      }
-    </ul>
+    <section class="blog-section">
+      <h2 class="section-title">Building an Evaluation Lab by Accident</h2>
+      <ul class="post-list">
+        {
+          seriesPosts.map((post) => (
+            <li>
+              <article class="post-item">
+                {
+                  post.data.cover && (
+                    <a class="post-thumb" href={`/blog/${postSlug(post.id)}/`}>
+                      <img
+                        src={post.data.cover}
+                        alt={post.data.coverAlt ?? post.data.title}
+                        width="320"
+                        height="180"
+                        loading="lazy"
+                      />
+                    </a>
+                  )
+                }
+                <div class="post-body">
+                  <p class="muted meta">
+                    {getActLabel(post.data.order, post.data.series)}
+                    {post.data.series &&
+                      post.data.order !== 0 &&
+                      ` · Part ${post.data.order}`}
+                    · {formatReadingTime(readingMinutes(post.body))} ·{" "}
+                    {formatPageStamp({
+                      version: post.data.version,
+                      published: post.data.date,
+                      lastUpdated: post.data.lastUpdated,
+                    })}
+                  </p>
+                  <h2>
+                    <a href={`/blog/${postSlug(post.id)}/`}>{post.data.title}</a>
+                  </h2>
+                  <p>{post.data.description}</p>
+                </div>
+              </article>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    {
+      standalonePosts.length > 0 && (
+        <section class="blog-section">
+          <h2 class="section-title">Standalone</h2>
+          <ul class="post-list">
+            {standalonePosts.map((post) => (
+              <li>
+                <article class="post-item">
+                  {post.data.cover && (
+                    <a class="post-thumb" href={`/blog/${postSlug(post.id)}/`}>
+                      <img
+                        src={post.data.cover}
+                        alt={post.data.coverAlt ?? post.data.title}
+                        width="320"
+                        height="180"
+                        loading="lazy"
+                      />
+                    </a>
+                  )}
+                  <div class="post-body">
+                    <p class="muted meta">
+                      {getActLabel(post.data.order, post.data.series)} ·{" "}
+                      {formatReadingTime(readingMinutes(post.body))} ·{" "}
+                      {formatPageStamp({
+                        version: post.data.version,
+                        published: post.data.date,
+                        lastUpdated: post.data.lastUpdated,
+                      })}
+                    </p>
+                    <h2>
+                      <a href={`/blog/${postSlug(post.id)}/`}>
+                        {post.data.title}
+                      </a>
+                    </h2>
+                    <p>{post.data.description}</p>
+                  </div>
+                </article>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
   </div>
 </BaseLayout>
 
 <style>
+  .blog-hero {
+    margin-bottom: 0.5rem;
+  }
+  .blog-section {
+    margin-top: 2.5rem;
+  }
+  .blog-process {
+    margin: 0 0 0.25rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-width: 42rem;
+  }
+  .section-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    color: var(--muted);
+  }
   .post-list {
     list-style: none;
     padding: 0;
-    margin: 2rem 0 0;
+    margin: 0;
   }
   .post-item {
     display: flex;

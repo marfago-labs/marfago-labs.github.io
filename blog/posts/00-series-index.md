@@ -4,8 +4,8 @@ slug: series-index
 series: marfago-labs-origin
 order: 0
 date: 2026-06-08
-lastUpdated: 2026-06-10
-version: "1.1"
+lastUpdated: 2026-06-19
+version: "1.3"
 description: How a personal tech news recommender forced me to build an open-source evaluation lab, and what it taught me about building with AI under engineering discipline.
 cover: /blog/covers/series-index.png
 coverAlt: A branching teal path through layered lab instruments — an evaluation stack built one experiment at a time.
@@ -13,26 +13,66 @@ coverAlt: A branching teal path through layered lab instruments — an evaluatio
 
 # Building an Evaluation Lab by Accident
 
-I didn't set out to build an open-source evaluation lab. I just wanted a better way to read the internet.
+I wanted a better way to read the internet — not another bookmark app.
 
-As a Principal Engineer, the volume of technical signal—arXiv papers, YouTube tech talks, GitHub releases—exceeds what I can actually process. I wanted to build a personal intelligence platform that could ingest this stream, investigate the technologies mentioned, connect the sources, and generate a synthesized briefing.
+As a Principal Engineer, the volume of technical signal (arXiv papers, YouTube tech talks, GitHub releases) exceeds what I can actually process. I started building **ArticleRecommender**: a personal platform that would ingest that stream, pull out the technologies mentioned, connect related sources, and hand me a synthesized briefing. Save a link, chat with it, search later — that part worked fine.
 
-I called it **ArticleRecommender**. I built the initial MVP: a FastAPI backend, a React frontend, some Agno agents, and a Postgres database. It worked. I could save links and chat with them.
+Then I tried to make it *smart*. A 45-minute YouTube transcript does not fit in an embedding model. Summarize it first? Fine — but how do I know the summary kept the important detail? Extract product names like Pinecone or GraphRAG so the system can investigate them? Also fine — but which model, and how fast, and how do I know it is right?
 
-But when it came time to build the autonomous ingestion and enrichment pipelines, I hit a wall. If I feed a 45-minute YouTube transcript into a vector database, it's noisy garbage. If I ask an LLM to summarize it first, how do I know the summary didn't drop the most important architectural detail? If I ask an agent to extract the named entities (like "Pinecone" or "GraphRAG") to investigate later, how do I know which NER model to use?
+I could not answer those questions. I had a product sketch and no way to measure whether the AI parts were trustworthy. So I stopped adding features and started building the tools to find out. What follows is how a side project turned into an open-source evaluation lab — and what I learned about working with AI agents along the way.
 
-I realized I couldn't build the product because I didn't have the tools to measure if the product was actually working.
+---
 
-I had to stop building features and start building measurement mechanisms. This series is the architectural story of **marfago-labs**: how I hit the limits of generative AI, how I built evidence instead of demos, and how AI agents became an execution layer under human engineering control.
+## Act I — The product I thought I was building
 
-## The Series Arc
+I had a clear north star: *Signal → Investigate → Connect → Brief.* Phase 1 was deliberately smaller — save documents, chat with them, search for them later — because the "smart" enrichment pipeline needed proof, not hope.
 
-1. **[The Minimum Credible Loop](./01-i-didnt-want-another-bookmark-app.md)** — Why I built ArticleRecommender, what Phase 1 actually shipped, and why I deliberately stopped before building the "smart" enrichment.
-2. **[Compressing YouTube for the Vector DB](./02-compress-then-embed.md)** — Embedder context limits, compress-then-embed sizing, hybrid retrieval, and the operational reality of API churn.
-3. **[ModernBERT and the Overlap Trap](./03-overlap-is-not-faithfulness.md)** — Why semantic similarity metrics give you false confidence, and how I built a multi-metric faithfulness scorecard.
-4. **[Benchmarking NER: Latency, Doc F1, and Cache Bugs](./04-picking-a-ner-backend.md)** — Comparing LLMs, BERT, and GLiNER in `ner-detector`. Why I chose Doc F1, and the latency bug that almost ruined the benchmark.
-5. **[Fixing LLM Offset Hallucinations](./05-entity-first-gold.md)** — LLMs can't count. How I solved character offset hallucinations using entity-first generation in `ner-gold-generator`.
-6. **[Publishing the Evidence](./06-publish-the-evidence-loop.md)** — Separating the generator from `ner-dataset`. CI validation, live stats, and closing the loop so I can get back to building the recommender.
-7. **[Agents Draft. I Sign.](./07-agents-draft-i-sign.md)** — The operating model behind the lab: the agent walk to sharpen intent, the control loop to earn trust, and the signature at the bottom.
+**[The Minimum Credible Loop](./01-i-didnt-want-another-bookmark-app.md)** — Why ArticleRecommender exists, what Phase 1 shipped, and why I stopped before building autonomous enrichment.
 
-If you are building agentic systems and are tired of vibes-based evaluation, this is how I put numbers behind the architecture. If you are using agents to build software, the final chapter names the method: walk the problem first, constrain the output second, sign only what survives scrutiny.
+**[Compressing YouTube for the Vector DB](./02-compress-then-embed.md)** — Long transcripts do not fit embedding models. I split out `text-compressor` to test compress-then-embed: summarize first, embed second. The sizing worked. Whether the summaries were *true* was still an open question.
+
+---
+
+## Act II — When the metrics lied
+
+The summaries read well. The first evaluation metric said they were excellent. Both were misleading in different ways.
+
+**[ModernBERT and the Overlap Trap](./03-overlap-is-not-faithfulness.md)** — Semantic similarity scored 0.91 and looked like a pass. A four-metric scorecard on the same rows told a different story. Overlap is not faithfulness.
+
+**[Benchmarking NER: Latency, Doc F1, and Cache Bugs](./04-picking-a-ner-backend.md)** — Entity coverage depends on NER. I built `ner-detector` to compare backends on quality and wall-clock time — and found a cache bug that made BERT look unusable until I fixed the implementation.
+
+---
+
+## Act III — Fixing the foundation
+
+Benchmarks need gold data. The way I was generating gold data was broken.
+
+**[Fixing LLM Offset Hallucinations](./05-entity-first-gold.md)** — LLMs write prose well and count characters badly. I inverted the pipeline: entities first, text second, offsets computed in code.
+
+**[Publishing the Evidence](./06-publish-the-evidence-loop.md)** — I split the generator from `ner-dataset`, added CI validation, and published live stats and benchmark reports. Private benchmarks are theatre; the loop had to be public.
+
+---
+
+## Act IV — How I actually work with agents
+
+The technical path above is what I built. This last chapter is *how* I built it.
+
+**[Agents Draft. I Sign.](./07-agents-draft-i-sign.md)** — Explore the problem with agents first (the walk), constrain output with tests and benchmarks second (the loop), and take personal accountability for what ships (the sign).
+
+---
+
+## Who this is for
+
+If you build with AI and are tired of vibes-based evaluation, these posts show how I put numbers behind architectural choices. If you use agents to write software, the final chapter describes the operating model: walk until the map is clear, then automate the work around judgment — not the judgment itself.
+
+Start with [Chapter 1](./01-i-didnt-want-another-bookmark-app.md), or jump to whichever act matches where you are stuck.
+
+Future in-series chapters will use **`08+`** filenames and `order` values (e.g. returning to ArticleRecommender). Standalone essays use slug-only filenames and do not consume those numbers.
+
+---
+
+## Further reading (standalone)
+
+[To Be a Better AI Engineer, Become an AQ Engineer](./aq-better-ai-engineer.md) — agent quality for multi-turn systems: server-owned progress, scenario contracts, and parity checks. Same discipline as this series, applied to conversational agents rather than single-shot compression or NER.
+
+[Specs Drive. Tests Validate.](./specs-drive-tests-validate.md) — how I ship a large agent-written application: specification-driven acceptance criteria, application QA at scale, lifecycle coverage matrices for multi-role E2E, and AQ as an extra layer — not a substitute for specs.

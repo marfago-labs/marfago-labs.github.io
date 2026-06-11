@@ -18,7 +18,7 @@ The shift I care about: **natural language is the new interface to the system** 
 
 - **Hard problem solved:** avoid LLM offset hallucinations with entity-first planning and deterministic span anchoring.
 - **Quality controls:** strict validation (exact and unique spans), multi-pass consensus labeling, and integrity metrics per dataset.
-- **Engineering bar:** coverage gate (95%+), typed Python, pre-commit checks, secret scanning, and CI workflows.
+- **Engineering bar:** coverage gate (95%+), typed Python, pre-commit checks, Gitleaks secret scanning in CI, and CI workflows on every repo.
 - **Evidence:** live dataset quality dashboard at [marfago-labs.github.io/ner-dataset](https://marfago-labs.github.io/ner-dataset/).
 
 ---

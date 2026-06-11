@@ -10,7 +10,10 @@ const path = Astro.url.pathname;
 
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="/">marfago labs</a>
+    <div class="brand-block">
+      <a class="brand" href="/">marfago labs</a>
+      <p class="tagline">The code is evidence. This site is the argument.</p>
+    </div>
     <nav aria-label="Main">
       {
         nav.map((item) => (
@@ -38,8 +41,11 @@ const path = Astro.url.pathname;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 1rem 1.5rem;
     flex-wrap: wrap;
+  }
+  .brand-block {
+    min-width: 0;
   }
   .brand {
     font-family: var(--font-serif);
@@ -50,6 +56,15 @@ const path = Astro.url.pathname;
   }
   .brand:hover {
     color: var(--accent);
+  }
+  .tagline {
+    margin: 0.15rem 0 0;
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 400;
+    line-height: 1.35;
+    color: var(--muted);
+    max-width: 22rem;
   }
   nav {
     display: flex;

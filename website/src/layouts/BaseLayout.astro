@@ -1,26 +1,18 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import PageStamp from "../components/PageStamp.astro";
 import "../styles/global.css";
 
 interface Props {
   title: string;
   description?: string;
-  version?: string;
-  published?: Date;
-  lastUpdated?: Date;
 }
 
 const {
   title,
   description = "Principal AI engineering lab — evidence over vibes.",
-  version,
-  published,
-  lastUpdated,
 } = Astro.props;
 const fullTitle = title === "marfago labs" ? title : `${title} · marfago labs`;
-const showStamp = version && lastUpdated;
 ---
 
 <!doctype html>
@@ -37,16 +29,6 @@ const showStamp = version && lastUpdated;
     <Header />
     <main class="main">
       <slot />
-      {
-        showStamp && (
-          <PageStamp
-            class="layout-stamp"
-            version={version}
-            published={published}
-            lastUpdated={lastUpdated}
-          />
-        )
-      }
     </main>
     <Footer />
   </body>
@@ -57,10 +39,5 @@ const showStamp = version && lastUpdated;
     max-width: var(--wide);
     margin: 0 auto;
     padding: 2.5rem 1.25rem 3rem;
-  }
-  :global(.layout-stamp) {
-    margin-top: 2.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
   }
 </style>

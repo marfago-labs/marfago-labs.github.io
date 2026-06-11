@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import BlogPost from "../../layouts/BlogPost.astro";
 import { postSlug } from "../../lib/blog";
+import { readingMinutes } from "../../lib/readingTime";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -13,6 +14,7 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await post.render();
+const minutes = readingMinutes(post.body);
 ---
 
 <BlogPost
@@ -22,8 +24,10 @@ const { Content } = await post.render();
   lastUpdated={post.data.lastUpdated}
   version={post.data.version}
   order={post.data.order}
+  series={post.data.series}
   cover={post.data.cover}
   coverAlt={post.data.coverAlt}
+  readingMinutes={minutes}
 >
   <Content />
 </BlogPost>

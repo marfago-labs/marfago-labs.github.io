@@ -34,10 +34,11 @@ jobs:
       - name: Verify blog source for sync
         run: test -d blog/posts && test "$(ls -1 blog/posts/*.md 2>/dev/null | wc -l)" -gt 0
 
-      - name: Install and build
+      - name: Install, check, and build
         working-directory: website
         run: |
           npm ci
+          npm run check
           npm run build
 
       - uses: actions/upload-pages-artifact@v4

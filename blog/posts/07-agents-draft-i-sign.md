@@ -4,8 +4,8 @@ slug: agents-draft-i-sign
 series: marfago-labs-origin
 order: 7
 date: 2026-06-09
-lastUpdated: 2026-06-10
-version: "1.1"
+lastUpdated: 2026-06-19
+version: "1.3"
 description: The agent walk, the control loop, and the sign — how I explore with agents first, then constrain output with tests, benchmarks, and public evidence.
 cover: /blog/covers/agents-draft-i-sign.png
 coverAlt: A winding teal path through a stylized city map — the agent walk before the build.
@@ -15,13 +15,13 @@ coverAlt: A winding teal path through a stylized city map — the agent walk bef
 
 Parts 1 through 6 were the technical path: the product problem, the compressor experiment, the metric traps, the NER benchmarks, the gold-data inversion, and the public evidence loop. This chapter is the operating model behind them.
 
-The obvious story about this lab is that I used AI to build it. That is true, but incomplete. The more useful story is that I worked in two distinct phases. First, I **walked** the problem space with agents until intent was sharp enough to trust. Then I ran a **control loop** that turned that intent into artifacts I would sign.
+The obvious story about this lab is that I used AI to build it. That is true, but incomplete. I worked in two distinct phases. First, I **walked** the problem space with agents until intent was sharp enough to trust. Then I ran a **control loop** that turned that intent into artifacts I would sign.
 
 Agents draft. I sign. But before the draft comes the walk.
 
 ## The Experiment
 
-I am running a practical experiment in software engineering:
+I am running a practical experiment:
 
 Can a single principal engineer, working with AI agents, produce public artifacts that hold up under review?
 
@@ -43,13 +43,11 @@ Before I ask an agent to build anything, I take a walk.
 
 Not a sprint to implementation. An exploratory pass through the problem space: the codebase, the prior conversations, the domain constraints, the failures from last time, the things I think I know and the things I am still unsure about. I call this **the agent walk**.
 
-The metaphor is deliberate. When you arrive in a city you do not know, you do not always pick a destination and march in a straight line. You walk. You notice landmarks. You change direction when a street looks wrong. You discover the neighbourhood you actually needed once you have seen enough of the map. The route becomes clear only after you have moved through the terrain.
+When you arrive in a city you do not know, you do not always pick a destination and march in a straight line. You walk. You notice landmarks. You change direction when a street looks wrong. You discover the neighbourhood you actually needed once you have seen enough of the map. The route becomes clear only after you have moved through the terrain.
 
-Building with agents works the same way. At the start, I often do not have a fully formed spec. I have a problem, a hunch, and a set of open questions. I use the agent to explore: read the repo, compare approaches, replay what happened in earlier sessions, challenge assumptions, surface trade-offs. During the walk I also ask it to propose hypotheses, argue for or against options, and search for information—documentation, papers, comparable systems—when I do not know enough yet. Those outputs are inputs to the map, not conclusions. I am not asking for code yet. I am building a shared mental map.
+Building with agents works the same way. At the start, I often do not have a fully formed spec. I have a problem, a hunch, and a set of open questions. I use the agent to explore: read the repo, compare approaches, replay what happened in earlier sessions, challenge assumptions, surface trade-offs. During the walk I also ask it to propose hypotheses, argue for or against options, and search for information — documentation, papers, comparable systems — when I do not know enough yet. Those outputs are inputs to the map, not conclusions. I am not asking for code yet. I am building a shared mental map.
 
-> That map is the point.
-
-Hallucination risk is highest when an agent is pushed to **produce** before it **understands**. If I ask for a benchmark harness before we have agreed what metric matters, I get a plausible report with the wrong headline number. If I ask for gold data before we have confronted the offset problem, I get JSON that looks clean and fails validation. The walk front-loads context. Wrong assumptions surface early, while the cost of correction is still a conversation—not a pull request.
+Hallucination risk is highest when an agent is pushed to **produce** before it **understands**. If I ask for a benchmark harness before we have agreed what metric matters, I get a plausible report with the wrong headline number. If I ask for gold data before we have confronted the offset problem, I get JSON that looks clean and fails validation. The walk front-loads context. Wrong assumptions surface early, while the cost of correction is still a conversation — not a pull request.
 
 Sometimes I discover the destination during the walk. I started this lab wanting ArticleRecommender to synthesize my reading list. Along the way, the walk made the real blockers visible: compression faithfulness, entity extraction, comparable gold, public evidence. I did not know I was building an evaluation lab when I began. I found out by walking.
 
@@ -91,7 +89,7 @@ When "Trustworthy?" comes back no, the fix is not always another draft. Sometime
 
 ## Evidence 3: The Gold Data Could Not Be Patched by Vibes
 
-[`ner-gold-generator`](./05-entity-first-gold.md) inverted the pipeline: entities first, prose second, offsets in code. No fuzzy repair of LLM counting errors. Failed validations retry or drop. That is the lab philosophy in one mechanism: **the model writes; code owns the invariants.**
+[`ner-gold-generator`](./05-entity-first-gold.md) inverted the pipeline: entities first, prose second, offsets in code. No fuzzy repair of LLM counting errors. Failed validations retry or drop. The model writes; code owns the invariants.
 
 ## Evidence 4: The Blog Is Part of the System
 
@@ -130,7 +128,7 @@ AI made the walk and the loop faster. It did not make either optional.
 The operating standard for marfago-labs is intentionally boring in the best sense:
 
 - Walk the problem before committing to a build.
-- Tests and coverage gates where behavior is implemented.
+- Tests and coverage gates where behavior is implemented — see [Specs Drive. Tests Validate.](./specs-drive-tests-validate.md) for the product-scale test pyramid (SDD as driver, unit/integration/E2E as validator).
 - Static checks and linters in CI.
 - Secret scanning.
 - Deterministic validators for persisted benchmark data.
@@ -140,7 +138,7 @@ The operating standard for marfago-labs is intentionally boring in the best sens
 
 That standard matters because agent output can look finished before it is finished. The screen fills with code. The report renders. The README sounds confident. The danger is accepting the appearance of completion.
 
-The antidote is mechanism.
+The antidote is mechanism — tests, validators, public reports — not confidence in the draft.
 
 ## What I Am Claiming
 
@@ -166,11 +164,9 @@ Do not automate judgment away. Walk until the map is clear. Then automate the wo
 - **Loop** — Constrain agent output with tests, benchmarks, CI, and scorecards; green on one metric is not trustworthy until the bundle passes.
 - **Sign** — Public evidence and human accountability: I stand behind what shipped, not what merely rendered on screen.
 - **Agents as execution layer** — Agents draft and implement; the engineer decides what deserves trust and owns the signature at the bottom.
-- **That map is the point** — I did not set out to build an evaluation lab; the walk revealed compression, NER, gold, and evidence as the real prerequisites.
+- **The map is the deliverable** — I did not set out to build an evaluation lab; the walk revealed compression, NER, gold, and evidence as the real prerequisites.
 
 **Previous:** [Publishing the Evidence](./06-publish-the-evidence-loop.md) · **Series index:** [Building an Evaluation Lab by Accident](./00-series-index.md)
-
-***
 
 ## The Evidence
 

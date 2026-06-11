@@ -1,7 +1,9 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import MermaidInit from "../components/MermaidInit.astro";
-import { formatPageStamp } from "../lib/pageMeta";
+import PageMetaRow from "../components/PageMetaRow.astro";
+import { getPostMetaLabel } from "../lib/blog";
+import { formatReadingTime } from "../lib/readingTime";
 
 interface Props {
   title: string;
@@ -10,17 +12,37 @@ interface Props {
   lastUpdated: Date;
   version: string;
   order: number;
+  series?: string;
   cover?: string;
   coverAlt?: string;
+  readingMinutes: number;
 }
 
-const { title, description, date, lastUpdated, version, order, cover, coverAlt } =
-  Astro.props;
-const stamp = formatPageStamp({ version, published: date, lastUpdated });
+const {
+  title,
+  description,
+  date,
+  lastUpdated,
+  version,
+  order,
+  series,
+  cover,
+  coverAlt,
+  readingMinutes,
+} = Astro.props;
+const metaLabel = getPostMetaLabel(order, series);
+const readingLabel = formatReadingTime(readingMinutes);
 ---
 
 <BaseLayout title={title} description={description}>
   <article class="prose">
+    <PageMetaRow
+      label={`${metaLabel} · ${readingLabel}`}
+      version={version}
+      published={date}
+      lastUpdated={lastUpdated}
+      tightBelow={!!cover}
+    />
     {
       cover && (
         <figure class="cover">
@@ -28,12 +50,6 @@ const stamp = formatPageStamp({ version, published: date, lastUpdated });
         </figure>
       )
     }
-    <div class="meta-row muted">
-      <span class="meta-label">
-        {order === 0 ? "Series index" : `Part ${order}`}
-      </span>
-      <span class="meta-stamp">{stamp}</span>
-    </div>
     <slot />
     <hr />
     <p><a href="/blog/">← All posts</a></p>
@@ -43,7 +59,7 @@ const stamp = formatPageStamp({ version, published: date, lastUpdated });
 
 <style>
   .cover {
-    margin: 0 0 1.5rem;
+    margin: 0 0 0.5rem;
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid var(--border);
@@ -55,25 +71,6 @@ const stamp = formatPageStamp({ version, published: date, lastUpdated });
     height: auto;
     aspect-ratio: 16 / 9;
     object-fit: cover;
-  }
-  .meta-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.85rem;
-  }
-  .meta-label {
-    flex-shrink: 0;
-  }
-  .meta-stamp {
-    text-align: right;
-  }
-  @media (max-width: 520px) {
-    .meta-stamp {
-      font-size: 0.8rem;
-    }
   }
   hr {
     margin: 2.5rem 0 1rem;

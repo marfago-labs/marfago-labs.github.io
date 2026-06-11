@@ -1,23 +1,35 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageMetaRow from "../../components/PageMetaRow.astro";
 import { projects } from "../../data/projects";
 import { sitePageMeta } from "../../data/site-pages";
+import { pageReadingLabel } from "../../lib/readingTime";
 
 const statusLabel = { public: "Public", wip: "WIP", private: "Private" };
 const meta = sitePageMeta.projects;
+
+const projectsReadingSource = [
+  "The code is evidence. Repo READMEs hold the detail; this page is the map.",
+  ...projects.map((p) => `${p.name}. ${p.tagline}`),
+].join(" ");
+const projectsMetaLabel = pageReadingLabel("Projects", projectsReadingSource);
 ---
 
 <BaseLayout
   title="Projects"
   description="marfago-labs repositories and live evidence."
-  version={meta.version}
-  published={meta.published}
-  lastUpdated={meta.lastUpdated}
 >
   <div class="prose-wide">
+    <PageMetaRow
+      label={projectsMetaLabel}
+      version={meta.version}
+      published={meta.published}
+      lastUpdated={meta.lastUpdated}
+    />
     <h1>Projects</h1>
     <p class="lead">
       The code is evidence. Repo READMEs hold the detail; this page is the map.
+      CI publishes interactive dashboards to GitHub Pages when a repo is public.
     </p>
 
     <div class="card-grid">
@@ -26,9 +38,7 @@ const meta = sitePageMeta.projects;
           <article class="card">
             <div class="card-head">
               <h2>
-                {p.id === "ner-pipeline" ? (
-                  <a href="/projects/ner/">{p.name}</a>
-                ) : p.repo ? (
+                {p.repo && p.status === "public" ? (
                   <a href={p.repo} target="_blank" rel="noopener">
                     {p.name}
                   </a>
@@ -41,10 +51,15 @@ const meta = sitePageMeta.projects;
               </span>
             </div>
             <p>{p.tagline}</p>
+            {p.overviewHref && (
+              <p class="overview">
+                <a href={p.overviewHref}>Pipeline overview on this site →</a>
+              </p>
+            )}
             {p.stack && (
               <p class="muted stack">{p.stack.join(" → ")}</p>
             )}
-            {p.evidence && p.evidence.length > 0 && (
+            {p.evidence && p.evidence.length > 0 && p.status === "public" && (
               <ul class="evidence">
                 {p.evidence.map((e) => (
                   <li>
@@ -80,6 +95,10 @@ const meta = sitePageMeta.projects;
   }
   .card h2 a:hover {
     color: var(--accent);
+  }
+  .overview {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
   }
   .stack {
     font-size: 0.85rem;

@@ -6,9 +6,17 @@
   "scripts": {
     "sync-blog": "node scripts/sync-blog.mjs",
     "dev": "npm run sync-blog && astro dev",
+    "dev:lan": "npm run sync-blog && astro dev --host",
     "build": "npm run sync-blog && astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "preview:lan": "astro preview --host",
+    "check": "astro check",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^3.2.4",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

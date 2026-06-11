@@ -24,7 +24,9 @@
   });
 
   async function renderMermaid() {
-    const nodes = document.querySelectorAll(".prose .mermaid:not([data-processed])");
+    const nodes = document.querySelectorAll<HTMLElement>(
+      ".prose .mermaid:not([data-processed])",
+    );
     if (nodes.length === 0) return;
     await mermaid.run({ nodes });
   }

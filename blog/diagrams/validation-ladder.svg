@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 448" role="img" aria-labelledby="vl-title vl-desc">
+  <title id="vl-title">Validation ladder</title>
+  <desc id="vl-desc">Five stacked validation steps: unit and coverage, stub Playwright, deployed API smoke, integration E2E, live agent benchmark.</desc>
+
+  <rect width="400" height="448" fill="#faf8f4"/>
+
+  <defs>
+    <style>
+      .rung-fast { fill: #d4ede8; stroke: #0d4f4f; stroke-width: 2; }
+      .rung-mid { fill: #e8f4f2; stroke: #0d4f4f; stroke-width: 1.5; }
+      .rung-slow { fill: #fffef9; stroke: #c8c2b6; stroke-width: 1.5; }
+      .rung-opt { fill: #fffef9; stroke: #0d4f4f; stroke-width: 1.5; stroke-dasharray: 6 4; }
+      .rail { stroke: #a8a298; stroke-width: 2; stroke-linecap: round; }
+      .badge { fill: #fffef9; stroke: #a8a298; stroke-width: 1.5; }
+      .title { font: 700 13px &quot;Segoe UI&quot;, system-ui, sans-serif; fill: #0d4f4f; text-anchor: start; dominant-baseline: central; }
+      .body { font: 500 11px &quot;Segoe UI&quot;, system-ui, sans-serif; fill: #1a1a18; text-anchor: start; dominant-baseline: central; }
+      .step { font: 700 12px &quot;Segoe UI&quot;, system-ui, sans-serif; fill: #0d4f4f; text-anchor: middle; dominant-baseline: central; }
+      .caption { font: 600 11px &quot;Segoe UI&quot;, system-ui, sans-serif; fill: #5c5a54; text-anchor: middle; dominant-baseline: central; }
+    </style>
+  </defs>
+
+  <line class="rail" x1="44" y1="52" x2="44" y2="372"/>
+
+  <g id="rungs">
+    <circle class="badge" cx="44" cy="50" r="14"/>
+    <text class="step" x="44" y="50">1</text>
+    <rect class="rung-fast" x="68" y="28" width="304" height="56" rx="8"/>
+    <text class="title" x="84" y="48">Unit + coverage</text>
+    <text class="body" x="84" y="66">Fast, deterministic, CI gate</text>
+
+    <circle class="badge" cx="44" cy="114" r="14"/>
+    <text class="step" x="44" y="114">2</text>
+    <rect class="rung-fast" x="68" y="92" width="304" height="56" rx="8"/>
+    <text class="title" x="84" y="112">Stub Playwright</text>
+    <text class="body" x="84" y="130">CI-shaped, no live auth</text>
+
+    <circle class="badge" cx="44" cy="178" r="14"/>
+    <text class="step" x="44" y="178">3</text>
+    <rect class="rung-mid" x="68" y="156" width="304" height="56" rx="8"/>
+    <text class="title" x="84" y="176">Deployed API smoke</text>
+    <text class="body" x="84" y="194">Liveness, CORS, RBAC, no SPA</text>
+
+    <circle class="badge" cx="44" cy="242" r="14"/>
+    <text class="step" x="44" y="242">4</text>
+    <rect class="rung-slow" x="68" y="220" width="304" height="56" rx="8"/>
+    <text class="title" x="84" y="240">Integration E2E</text>
+    <text class="body" x="84" y="258">Full journeys, env optional</text>
+
+    <circle class="badge" cx="44" cy="306" r="14"/>
+    <text class="step" x="44" y="306">5</text>
+    <rect class="rung-opt" x="68" y="284" width="304" height="56" rx="8"/>
+    <text class="title" x="84" y="304">Live agent benchmark</text>
+    <text class="body" x="84" y="322">Scored scenarios, opt-in</text>
+  </g>
+
+  <text class="caption" x="200" y="400">Do not skip to step 5 because the product has an LLM</text>
+</svg>
