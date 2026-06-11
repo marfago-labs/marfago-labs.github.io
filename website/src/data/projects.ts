@@ -6,9 +6,16 @@ export interface Project {
   tagline: string;
   status: ProjectStatus;
   repo?: string;
+  overviewHref?: string;
   evidence?: { label: string; href: string }[];
   stack?: string[];
 }
+
+/** GitHub Pages URLs for repo CI dashboards — reachable when the repo is public. */
+export const repoPages = {
+  nerDataset: "https://marfago-labs.github.io/ner-dataset/",
+  nerDetector: "https://marfago-labs.github.io/ner-detector/",
+} as const;
 
 export const projects: Project[] = [
   {
@@ -17,15 +24,17 @@ export const projects: Project[] = [
     tagline:
       "Gold data → validated datasets → backend benchmarks with Doc F1 and latency.",
     status: "public",
+    repo: "https://github.com/marfago-labs/ner-gold-generator",
+    overviewHref: "/projects/ner/",
     stack: ["ner-gold-generator", "ner-dataset", "ner-detector"],
     evidence: [
       {
-        label: "Dataset stats",
-        href: "https://marfago-labs.github.io/ner-dataset/",
+        label: "ner-dataset repo",
+        href: "https://github.com/marfago-labs/ner-dataset",
       },
       {
-        label: "Benchmark report",
-        href: "https://marfago-labs.github.io/ner-detector/",
+        label: "ner-detector repo",
+        href: "https://github.com/marfago-labs/ner-detector",
       },
     ],
   },
@@ -61,8 +70,8 @@ export const projects: Project[] = [
     repo: "https://github.com/marfago-labs/ner-dataset",
     evidence: [
       {
-        label: "Live stats",
-        href: "https://marfago-labs.github.io/ner-dataset/",
+        label: "Repo",
+        href: "https://github.com/marfago-labs/ner-dataset",
       },
     ],
   },
@@ -75,8 +84,8 @@ export const projects: Project[] = [
     repo: "https://github.com/marfago-labs/ner-detector",
     evidence: [
       {
-        label: "Benchmark report",
-        href: "https://marfago-labs.github.io/ner-detector/",
+        label: "Repo",
+        href: "https://github.com/marfago-labs/ner-detector",
       },
     ],
   },
@@ -84,17 +93,17 @@ export const projects: Project[] = [
 
 export const evidenceLinks = [
   {
-    title: "Dataset quality dashboard",
-    href: "https://marfago-labs.github.io/ner-dataset/",
-    source: "ner-dataset CI",
+    title: "NER evaluation pipeline",
+    href: "/projects/ner/",
+    source: "ner-gold-generator → ner-dataset → ner-detector",
     question:
-      "Does our NER gold have valid spans, genre coverage, and integrity checks that CI enforces?",
+      "How gold is generated, validated, and benchmarked — repos and CI dashboards when public.",
   },
   {
-    title: "NER backend benchmark",
-    href: "https://marfago-labs.github.io/ner-detector/",
-    source: "ner-detector CI",
+    title: "Dataset & benchmark repos",
+    href: "https://github.com/marfago-labs/ner-dataset",
+    source: "GitHub",
     question:
-      "Which extractor wins on Doc F1 vs wall-clock latency for ingest and enrichment?",
+      "Source JSONL, CI validators, and Pages reports on marfago-labs.github.io when repos are public.",
   },
 ];

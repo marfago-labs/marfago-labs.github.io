@@ -1,0 +1,64 @@
+---
+import FreshnessStamp from "./FreshnessStamp.astro";
+
+interface Props {
+  label: string;
+  version: string;
+  published?: Date;
+  lastUpdated: Date;
+  tightBelow?: boolean;
+  class?: string;
+}
+
+const {
+  label,
+  version,
+  published,
+  lastUpdated,
+  tightBelow = false,
+  class: className = "",
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    "meta-row",
+    "muted",
+    tightBelow && "meta-row--tight-below",
+    className,
+  ]}
+>
+  <span class="meta-label">{label}</span>
+  <FreshnessStamp
+    version={version}
+    published={published}
+    lastUpdated={lastUpdated}
+    inline={true}
+    class="meta-stamp"
+  />
+</div>
+
+<style>
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+  }
+  .meta-row--tight-below {
+    margin-bottom: calc(-0.1rem);
+  }
+  .meta-label {
+    flex-shrink: 0;
+  }
+  .meta-row :global(.meta-stamp) {
+    text-align: right;
+  }
+  @media (max-width: 520px) {
+    .meta-row :global(.meta-stamp) {
+      font-size: 0.8rem;
+    }
+  }
+</style>

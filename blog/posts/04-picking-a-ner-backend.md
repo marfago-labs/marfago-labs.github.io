@@ -4,8 +4,8 @@ slug: picking-a-ner-backend
 series: marfago-labs-origin
 order: 4
 date: 2026-06-08
-lastUpdated: 2026-06-10
-version: "1.1"
+lastUpdated: 2026-06-13
+version: "1.3"
 description: Comparing LLMs, BERT, and GLiNER in ner-detector. Why I chose Doc F1, and the latency bug that almost ruined the benchmark.
 cover: /blog/covers/picking-a-ner-backend.png
 coverAlt: Three teal backend stacks on a benchmark grid with latency and F1 markers — picking a NER backend with evidence.
@@ -15,18 +15,29 @@ coverAlt: Three teal backend stacks on a benchmark grid with latency and F1 mark
 
 `text-compressor` needed NER to evaluate summaries. ArticleRecommender needed it to extract technologies from articles so it could autonomously investigate them.
 
-I could have just hardcoded an API call to OpenRouter and asked an LLM to extract the entities. But I didn't want to pick a model based on vibes; I wanted a harness to measure the trade-offs between quality and latency.
+I could have hardcoded an API call to OpenRouter and asked an LLM to extract the entities. Instead I built a harness to measure the trade-offs between quality and latency, because I did not want to pick a model based on vibes.
 
 That is why I built **`ner-detector`**.
+
+## Context
+
+**Named Entity Recognition (NER)** finds names and labels in text — people, organizations, product names, dates, and so on. For ArticleRecommender, the question is narrower: did the system spot "Pinecone" or "GraphRAG" in this document?
+
+To grade NER models you need **gold data** — documents where a human (or a trusted process) has marked the correct entities. You run each model against that gold and compare.
+
+**F1** is a standard score combining precision and recall. What matters is *what* you are scoring:
+
+- **Strict Span F1** — Did the model find the entity at the exact character positions? Off by one space counts as wrong.
+- **Doc F1 (Document-Level F1)** — Did the model find the entity text *somewhere* in the document? For my use case — "should we investigate Pinecone?" — that is the right question.
 
 ## The Pluggable Harness
 
 `ner-detector` is a pluggable NER runtime and benchmark runner. I implemented four distinct backends:
 
-1. **Pattern:** Regex and heuristics. Execution time: milliseconds. Quality: terrible on complex text.
-2. **Transformers:** Classic BERT-family NER.
-3. **GLiNER / NuNER:** Zero-shot models. You provide the label schema at runtime.
-4. **LLM:** OpenRouter extraction.
+1. **Pattern** — Regex and heuristics. Latency: milliseconds. Quality: poor on complex text.
+2. **Transformers** — BERT-family NER. Latency: tens of ms per doc when the model stays cached. Quality: fixed PER/ORG/LOC types.
+3. **GLiNER / NuNER** — Zero-shot models; you provide the label schema at runtime. Latency: hundreds of ms to seconds. Quality: useful for domain-specific labels without retraining.
+4. **LLM** — OpenRouter extraction. Latency: ~7–9 s per doc. Quality: strong on news gold, weaker on sparse scientific abstracts.
 
 I built a CLI, a Python API, and a YAML-driven configuration system. I mocked the heavy ML paths in CI so I could maintain my ≥95% test coverage gate without downloading 500MB of weights on every pull request.
 
@@ -36,7 +47,7 @@ Then I built the benchmark runner to pit them against each other.
 
 If you read academic NLP papers, you will see a lot of focus on *Strict Span F1*. This metric requires the model to identify the exact character start and end offsets of an entity.
 
-But my use case is different. I am doing *salient-entity* extraction. I only care about the important entities (e.g., "Pinecone"), not every single noun. If a model finds "Pinecone" but misses the exact character offset by one space, Strict Span F1 punishes it as a false positive.
+My use case is different. I am doing *salient-entity* extraction. I only care about the important entities (e.g., "Pinecone"), not every single noun. If a model finds "Pinecone" but misses the exact character offset by one space, Strict Span F1 punishes it as a false positive.
 
 For this system, that is the wrong headline metric. I still validate spans where the dataset requires them, but the product question is simpler: did the system find the entity that should drive downstream investigation?
 
@@ -44,9 +55,9 @@ So I wrote [ADR 001](https://github.com/marfago-labs/ner-detector/blob/master/do
 
 ## The Latency Bug
 
-When I ran the first full benchmark, I noticed the pipeline was crawling. I looked at the logs, expecting to see network latency from the LLM.
+When I ran the first full benchmark, the pipeline was crawling. I looked at the logs, expecting network latency from the LLM.
 
-Instead, I saw the Hugging Face `transformers` backend taking seconds per document. It wasn't downloading weights from the internet; it was re-loading the model from disk into memory for *every single document*. The code was optimizing for strict process isolation over iteration speed.
+Instead, I saw the Hugging Face `transformers` backend taking seconds per document. It was not downloading weights from the internet; it was re-loading the model from disk into memory for *every single document*. The code was optimizing for strict process isolation over iteration speed.
 
 This is why you must measure wall-clock time. A model that claims to be "fast" in a paper is useless if your implementation reloads weights on every document. I fixed the transformers backend cache policy; BERT inference settled at **~80 ms/example** on the published run (down from multi-second per-doc behavior before the fix).
 
@@ -66,7 +77,7 @@ There is no universal winner. BERT is not benchmarked on `arxiv_gold` — its Co
 
 That gave me routing logic. But the benchmark revealed a deeper problem.
 
-To run a benchmark, you need "Gold" data—a dataset of documents with perfectly annotated entities to test the models against. And the way I was generating that Gold data was fundamentally broken.
+To run a benchmark, you need gold data — documents with correctly annotated entities to test against. And the way I was generating that gold data was fundamentally broken.
 
 ## Takeaways
 

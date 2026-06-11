@@ -1,51 +1,99 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageMetaRow from "../components/PageMetaRow.astro";
+import WalkLoopSign from "../components/WalkLoopSign.astro";
 import { sitePageMeta } from "../data/site-pages";
+import { pageReadingLabel } from "../lib/readingTime";
 
 const meta = sitePageMeta.about;
+
+const aboutReadingSource = [
+  "Principal AI engineer in Dublin. I run marfago-labs because I could not ship agentic pipelines I could not measure.",
+  "Walk explores and researches. Loop drafts and verifies. Sign publishes evidence.",
+  "Specs drive. Tests validate. Agents propose. I sign.",
+  "Building an Evaluation Lab by Accident. NER evaluation pipeline. Specs Drive Tests Validate.",
+].join(" ");
+const aboutMetaLabel = pageReadingLabel("About", aboutReadingSource);
 ---
 
 <BaseLayout
   title="About"
-  description="Marco Fago — principal AI engineer, Dublin."
-  version={meta.version}
-  published={meta.published}
-  lastUpdated={meta.lastUpdated}
+  description="Marco Fago — principal AI engineer in Dublin. How I work with agents, specs, tests, and public evidence at marfago-labs."
 >
   <div class="prose">
+    <PageMetaRow
+      label={aboutMetaLabel}
+      version={meta.version}
+      published={meta.published}
+      lastUpdated={meta.lastUpdated}
+    />
     <h1>About</h1>
     <p class="lead">
-      Principal AI engineer in Dublin. 25+ years shipping distributed systems
-      and ML platforms (including ~8 years at Amazon).
+      Principal AI engineer in Dublin — 25+ years shipping distributed systems
+      and ML platforms (including ~8 years at Amazon). I run <strong>marfago-labs</strong> because I hit a wall
+      building a personal recommender: the demos looked fine, and I had no
+      proof the AI parts were true.
     </p>
     <p>
-      I build agentic systems where humans stay accountable. The recurring
-      theme in this lab: <strong>you cannot architect on vibes</strong> — you
-      need gold data, benchmarks, and falsifiable checks before production
-      patterns earn trust.
-    </p>
-    <p>
-      The shift I care about: <strong>natural language is the new interface to the
-      system</strong> — specs, constraints, context. The implementation is
-      generated, revised, and discarded. What compounds is whether the
-      <em>intent</em> stayed true and whether you can <em>prove</em> it.
-      <strong>Code is cheap now; judgment isn't.</strong>
+      The lab is the answer — gold data, benchmarks, CI-published reports, and
+      write-ups where I show the bad numbers too. The blog series
+      <a href="/blog/series-index/">Building an Evaluation Lab by Accident</a>
+      is the narrative; the repos and dashboards linked from
+      <a href="/projects/">Projects</a> are the evidence.
     </p>
 
-    <h2>How I work</h2>
+    <div class="about-loop">
+      <WalkLoopSign />
+      <div>
+        <h2>How I work</h2>
+        <p>
+          I explore with agents first, then constrain what ships. Written specs
+          and user stories set intent; unit, integration, and E2E tests prove
+          it; public artifacts let someone else disagree with me.
+        </p>
+        <p>
+          Posts and diagrams are drafted with <a href="https://cursor.com">Cursor</a>,
+          then edited and fact-checked against the repos and benchmarks cited.
+          Same loop as the code: <strong>agents propose, I sign.</strong>
+        </p>
+        <ul class="about-links">
+          <li>
+            <a href="/blog/agents-draft-i-sign/">Agents Draft. I Sign.</a>
+            — the walk, loop, and sign
+          </li>
+          <li>
+            <a href="/blog/specs-drive-tests-validate/">Specs Drive. Tests Validate.</a>
+            — SDD and the test pyramid
+          </li>
+          <li>
+            <a href="/blog/aq-better-ai-engineer/">Become an AQ Engineer</a>
+            — grading agent behavior, not chat prose
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>What I refuse to optimize for</h2>
     <ul>
-      <li><strong>Articulate before you automate.</strong> Written intent survives handoffs and model drift.</li>
-      <li><strong>Decompose until you can verify.</strong> Large bets become inspectable steps.</li>
-      <li><strong>Make disagreement cheap.</strong> Interfaces and evidence others can challenge.</li>
-      <li><strong>Teach the system, not just the team.</strong> If the design cannot be explained plainly, it cannot be owned.</li>
-      <li><strong>Stay curious, stay skeptical.</strong> Curiosity finds leverage; skepticism keeps it honest.</li>
+      <li>
+        <strong>Theatre over truth</strong> — if the metric looks good and the
+        row-level checks disagree, I publish both.
+      </li>
+      <li>
+        <strong>Heroics over systems</strong> — platforms, validators, and CI
+        outlive a launch week.
+      </li>
+      <li>
+        <strong>Speed over judgment</strong> — code is cheap now; signing off
+        is not.
+      </li>
     </ul>
 
-    <h2>What I optimize for</h2>
+    <h2>Start here</h2>
     <ul>
-      <li><strong>Truth over theatre</strong> — report the bad number; fix it.</li>
-      <li><strong>Systems over heroics</strong> — platforms outlive launches.</li>
-      <li><strong>Human agency in the loop</strong> — AI widens what one engineer can ship responsibly.</li>
+      <li><a href="/">Home</a> — the story in four acts</li>
+      <li><a href="/blog/series-index/">Series index</a> — full evaluation-lab arc</li>
+      <li><a href="/projects/ner/">NER pipeline</a> — gold → dataset → benchmark</li>
     </ul>
 
     <h2>Elsewhere</h2>
@@ -61,3 +109,31 @@ const meta = sitePageMeta.about;
     </p>
   </div>
 </BaseLayout>
+
+<style>
+  .about-loop {
+    display: grid;
+    gap: 1.25rem;
+    align-items: start;
+    margin: 2rem 0;
+  }
+  @media (min-width: 640px) {
+    .about-loop {
+      grid-template-columns: auto 1fr;
+      gap: 2rem;
+    }
+  }
+  .about-loop .walk-loop-sign {
+    margin: 0;
+  }
+  .about-loop h2 {
+    margin-top: 0;
+  }
+  .about-links {
+    margin: 1rem 0 0;
+    padding-left: 1.35rem;
+  }
+  .about-links li {
+    margin-bottom: 0.5rem;
+  }
+</style>

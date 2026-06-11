@@ -1,0 +1,28 @@
+---
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const svgPath = path.join(
+  fileURLToPath(new URL(".", import.meta.url)),
+  "../../public/blog/diagrams/walk-loop-sign.svg",
+);
+const markup = readFileSync(svgPath, "utf-8");
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div class:list={["walk-loop-sign", className]} set:html={markup} />
+
+<style>
+  .walk-loop-sign :global(svg) {
+    display: block;
+    width: 100%;
+    max-width: 14rem;
+    height: auto;
+  }
+</style>

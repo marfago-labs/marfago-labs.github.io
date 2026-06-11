@@ -1,0 +1,14 @@
+# Gitleaks config for marfago-labs.github.io (CI + pre-commit).
+# https://github.com/gitleaks/gitleaks
+
+title = "marfago-labs.github.io"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Docs and placeholders (not real secrets)"
+paths = [
+  '''(?:^|/)\.env\.example$''',
+  '''(?:^|/)docs/''',
+]

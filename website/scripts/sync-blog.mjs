@@ -14,6 +14,7 @@ const diagramsDest = path.resolve(root, "public", "blog", "diagrams");
 const assetPattern = /\.(png|jpe?g|webp|svg)$/i;
 
 export const blogSourceDirs = [srcDir, coversSrc, diagramsSrc];
+export { diagramsSrc };
 
 function parseSlug(text) {
   const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
@@ -37,6 +38,14 @@ function rewriteLinks(body, fileToSlug) {
   return out;
 }
 
+/** Drop slug from synced frontmatter; Astro ids come from filenames via postSlug(). */
+function stripSlugFromFrontmatter(fm) {
+  return fm
+    .split("\n")
+    .filter((line) => !/^slug:\s*/.test(line))
+    .join("\n");
+}
+
 function syncAssets(src, dest, label, quiet) {
   if (!fs.existsSync(src)) return 0;
   fs.mkdirSync(dest, { recursive: true });
@@ -50,8 +59,22 @@ function syncAssets(src, dest, label, quiet) {
   return assets.length;
 }
 
+function safeUnlink(filePath) {
+  try {
+    fs.unlinkSync(filePath);
+  } catch (err) {
+    if (err && (err.code === "ENOENT" || err.code === "EPERM")) return;
+    throw err;
+  }
+}
+
+/** Drop Astro content cache so remark-inlined diagrams pick up SVG changes. */
+export function clearAstroContentCache() {
+  safeUnlink(path.join(root, ".astro", "data-store.json"));
+}
+
 /** @returns {number} post count synced, or 0 if source missing */
-export function syncBlog({ quiet = false } = {}) {
+export function syncBlog({ quiet = false, invalidateDiagramCache = false } = {}) {
   if (!fs.existsSync(srcDir)) {
     if (!quiet) {
       console.warn(`sync-blog: source missing (${srcDir}); skipping`);
@@ -60,11 +83,15 @@ export function syncBlog({ quiet = false } = {}) {
   }
 
   fs.mkdirSync(destDir, { recursive: true });
-  for (const old of fs.readdirSync(destDir)) {
-    if (old.endsWith(".md")) fs.unlinkSync(path.join(destDir, old));
-  }
 
   const files = fs.readdirSync(srcDir).filter((f) => f.endsWith(".md"));
+  const sourceSet = new Set(files);
+
+  for (const old of fs.readdirSync(destDir)) {
+    if (old.endsWith(".md") && !sourceSet.has(old)) {
+      safeUnlink(path.join(destDir, old));
+    }
+  }
   const fileToSlug = {};
   for (const file of files) {
     const raw = fs.readFileSync(path.join(srcDir, file), "utf8");
@@ -80,12 +107,16 @@ export function syncBlog({ quiet = false } = {}) {
       continue;
     }
     const [, fm, body] = parts;
+    const cleanedFm = stripSlugFromFrontmatter(fm);
     const rewritten = rewriteLinks(body, fileToSlug);
-    fs.writeFileSync(path.join(destDir, file), `---\n${fm}\n---\n${rewritten}`);
+    fs.writeFileSync(path.join(destDir, file), `---\n${cleanedFm}\n---\n${rewritten}`);
   }
 
   syncAssets(coversSrc, coversDest, "covers", quiet);
-  syncAssets(diagramsSrc, diagramsDest, "diagrams", quiet);
+  const diagramCount = syncAssets(diagramsSrc, diagramsDest, "diagrams", quiet);
+  if (invalidateDiagramCache && diagramCount > 0) {
+    clearAstroContentCache();
+  }
 
   if (!quiet) {
     console.log(`sync-blog: synced ${files.length} posts → src/content/blog/`);
@@ -95,5 +126,5 @@ export function syncBlog({ quiet = false } = {}) {
 
 const isCli = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isCli) {
-  syncBlog();
+  syncBlog({ invalidateDiagramCache: true });
 }

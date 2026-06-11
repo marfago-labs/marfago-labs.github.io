@@ -1,0 +1,50 @@
+---
+import { formatPageStamp } from "../lib/pageMeta";
+
+interface Props {
+  version: string;
+  published?: Date;
+  lastUpdated: Date;
+  align?: "left" | "right";
+  inline?: boolean;
+  class?: string;
+}
+
+const {
+  version,
+  published,
+  lastUpdated,
+  align = "right",
+  inline = false,
+  class: className = "",
+} = Astro.props;
+const label = formatPageStamp({ version, published, lastUpdated });
+const Tag = inline ? "span" : "p";
+---
+
+<Tag
+  class:list={[
+    "freshness-stamp",
+    "muted",
+    align === "right" && "freshness-stamp--right",
+    inline && "freshness-stamp--inline",
+    className,
+  ]}
+>
+  {label}
+</Tag>
+
+<style>
+  .freshness-stamp {
+    margin: 1rem 0 0;
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .freshness-stamp--inline {
+    margin: 0;
+    font-size: inherit;
+  }
+  .freshness-stamp--right {
+    text-align: right;
+  }
+</style>

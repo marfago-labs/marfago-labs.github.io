@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 212" role="img" aria-labelledby="fr-title fr-desc">
+  <title id="fr-title">Faithfulness radar by paper</title>
+  <desc id="fr-desc">Radar chart for four papers across overlap F1, entity coverage, numeric match, and NLI faithfulness. ModernBERT F1 clusters near 0.91; faithfulness axes diverge.</desc>
+
+  <g transform="translate(100 86)">
+    <circle cx="0" cy="0" r="13" fill="none" stroke="#e5dfd3" stroke-width="1"/>
+    <circle cx="0" cy="0" r="26" fill="none" stroke="#e5dfd3" stroke-width="1"/>
+    <circle cx="0" cy="0" r="39" fill="none" stroke="#e5dfd3" stroke-width="1"/>
+    <circle cx="0" cy="0" r="52" fill="none" stroke="#c8c2b6" stroke-width="1"/>
+
+    <line x1="0" y1="-52" x2="0" y2="52" stroke="#e5dfd3" stroke-width="1"/>
+    <line x1="-52" y1="0" x2="52" y2="0" stroke="#e5dfd3" stroke-width="1"/>
+
+    <polygon points="0,-47.216 52,0 0,20.8 -52,0" fill="none" stroke="#0d4f4f" stroke-width="1.5" stroke-opacity="0.35"/>
+    <polygon points="0,-47.424 26,0 0,29.64 -26,0" fill="#7a5c20" fill-opacity="0.12" stroke="#7a5c20" stroke-width="1.5" stroke-linejoin="round"/>
+    <polygon points="0,-47.476 41.6,0 0,52 -17.16,0" fill="none" stroke="#6b4c9a" stroke-width="1.5" stroke-linejoin="round"/>
+    <polygon points="0,-46.956 40.04,0 0,52 -26,0" fill="none" stroke="#2a6b8a" stroke-width="1.5" stroke-linejoin="round"/>
+  </g>
+
+  <text x="100" y="20" fill="#5c5a54" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="600" text-anchor="middle">F1</text>
+  <text x="168" y="88" fill="#5c5a54" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="600" text-anchor="start" dominant-baseline="central">Entity</text>
+  <text x="100" y="150" fill="#5c5a54" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="600" text-anchor="middle">Numeric</text>
+  <text x="32" y="88" fill="#5c5a54" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="600" text-anchor="end" dominant-baseline="central">NLI</text>
+
+  <g font-family="Segoe UI, system-ui, sans-serif" font-size="9" fill="#5c5a54">
+    <rect x="24" y="168" width="9" height="9" rx="1" fill="none" stroke="#0d4f4f" stroke-width="1.5" stroke-opacity="0.55"/>
+    <text x="38" y="174.5" dominant-baseline="central">Attn</text>
+
+    <rect x="104" y="168" width="9" height="9" rx="1" fill="#7a5c20" fill-opacity="0.25" stroke="#7a5c20" stroke-width="1.5"/>
+    <text x="118" y="174.5" dominant-baseline="central">ResNet</text>
+
+    <rect x="24" y="190" width="9" height="9" rx="1" fill="none" stroke="#6b4c9a" stroke-width="1.5"/>
+    <text x="38" y="196.5" dominant-baseline="central">GPT&#8209;3</text>
+
+    <rect x="104" y="190" width="9" height="9" rx="1" fill="none" stroke="#2a6b8a" stroke-width="1.5"/>
+    <text x="118" y="196.5" dominant-baseline="central">ViT</text>
+  </g>
+</svg>

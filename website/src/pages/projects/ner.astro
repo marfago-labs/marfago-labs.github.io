@@ -1,19 +1,33 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageMetaRow from "../../components/PageMetaRow.astro";
+import { repoPages } from "../../data/projects";
 import { sitePageMeta } from "../../data/site-pages";
+import { pageReadingLabel } from "../../lib/readingTime";
 
 const meta = sitePageMeta.ner;
+
+const nerReadingSource = [
+  "A production-style path from gold generation to benchmark-ready datasets to measured backend comparison.",
+  "LLM span offsets hallucinate. Strict vs relaxed F1 disagree on salient gold.",
+  "Engineering bar. Gold JSONL validated on every PR. YAML-driven benchmarks.",
+  "ner-gold-generator ner-dataset ner-detector",
+].join(" ");
+const nerMetaLabel = pageReadingLabel("NER pipeline", nerReadingSource);
 ---
 
 <BaseLayout
   title="NER evaluation pipeline"
   description="Gold generation, validated datasets, and backend benchmarks."
-  version={meta.version}
-  published={meta.published}
-  lastUpdated={meta.lastUpdated}
 >
   <div class="prose">
     <p class="muted"><a href="/projects/">← Projects</a></p>
+    <PageMetaRow
+      label={nerMetaLabel}
+      version={meta.version}
+      published={meta.published}
+      lastUpdated={meta.lastUpdated}
+    />
     <h1>NER evaluation pipeline</h1>
     <p class="lead">
       A production-style path from gold generation to benchmark-ready datasets
@@ -40,26 +54,23 @@ const meta = sitePageMeta.ner;
       <li>YAML-driven benchmarks; HTML reports from CI</li>
     </ul>
 
-    <h2>Live evidence</h2>
-    <p>Published by repo workflows — open these for full interactive reports.</p>
-    <ul>
-      <li>
-        <a href="https://marfago-labs.github.io/ner-dataset/" target="_blank" rel="noopener">
-          Dataset quality dashboard ↗
-        </a>
-      </li>
-      <li>
-        <a href="https://marfago-labs.github.io/ner-detector/" target="_blank" rel="noopener">
-          NER backend benchmark report ↗
-        </a>
-      </li>
-    </ul>
-
     <h2>Repos</h2>
+    <p>
+      Start here. CI in each repo builds validators and (where configured) GitHub
+      Pages reports. Pages URLs below work when the repo is public.
+    </p>
     <ul>
       <li><a href="https://github.com/marfago-labs/ner-gold-generator">ner-gold-generator</a></li>
-      <li><a href="https://github.com/marfago-labs/ner-dataset">ner-dataset</a></li>
-      <li><a href="https://github.com/marfago-labs/ner-detector">ner-detector</a></li>
+      <li>
+        <a href="https://github.com/marfago-labs/ner-dataset">ner-dataset</a>
+        — Pages dashboard:
+        <a href={repoPages.nerDataset} target="_blank" rel="noopener">{repoPages.nerDataset} ↗</a>
+      </li>
+      <li>
+        <a href="https://github.com/marfago-labs/ner-detector">ner-detector</a>
+        — Pages benchmark:
+        <a href={repoPages.nerDetector} target="_blank" rel="noopener">{repoPages.nerDetector} ↗</a>
+      </li>
     </ul>
 
     <h2>Story</h2>
