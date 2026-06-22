@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  type BlogPostEntry,
   getActLabel,
   getPostMetaLabel,
   isStandalonePost,
@@ -7,6 +8,8 @@ import {
   postSlug,
   STANDALONE_ORDER_MIN,
 } from "./blog";
+
+const testDate = new Date("2024-01-01");
 
 describe("postSlug", () => {
   it("strips numeric prefix from series filenames", () => {
@@ -37,23 +40,40 @@ describe("isStandalonePost", () => {
 });
 
 describe("partitionBlogPosts", () => {
-  const posts = [
+  const posts: BlogPostEntry[] = [
     {
       id: "00-series-index.md",
-      data: { series: "marfago-labs-origin", order: 0, title: "Index" },
+      data: {
+        series: "marfago-labs-origin",
+        order: 0,
+        title: "Index",
+        description: "Series index",
+        date: testDate,
+      },
     },
     {
       id: "01-chapter.md",
-      data: { series: "marfago-labs-origin", order: 1, title: "One" },
+      data: {
+        series: "marfago-labs-origin",
+        order: 1,
+        title: "One",
+        description: "Chapter one",
+        date: testDate,
+      },
     },
     {
       id: "specs.md",
-      data: { order: 9002, title: "Specs" },
+      data: {
+        order: 9002,
+        title: "Specs",
+        description: "Standalone specs",
+        date: testDate,
+      },
     },
-  ] as const;
+  ];
 
   it("splits series and standalone posts and sorts by order", () => {
-    const { series, standalone } = partitionBlogPosts([...posts]);
+    const { series, standalone } = partitionBlogPosts(posts);
     expect(series.map((p) => p.id)).toEqual([
       "00-series-index.md",
       "01-chapter.md",
