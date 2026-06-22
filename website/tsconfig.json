@@ -1,5 +1,6 @@
 {
   "extends": "astro/tsconfigs/strict",
+  "exclude": ["**/*.test.ts"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
