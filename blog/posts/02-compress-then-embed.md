@@ -4,8 +4,8 @@ slug: compress-then-embed
 series: marfago-labs-origin
 order: 2
 date: 2026-06-08
-lastUpdated: 2026-06-13
-version: "1.6"
+lastUpdated: 2026-06-21
+version: "1.7"
 description: The text-compressor experiment — embedder context limits, compress-then-embed, and the operational reality of API churn.
 cover: /blog/covers/compress-then-embed.png
 coverAlt: A long transcript ribbon narrowing into a dense teal block before a vector grid — compress, then embed.
@@ -38,6 +38,8 @@ Take the 3Blue1Brown neural-networks intro in my corpus (`aircAruvnKk`). The cac
 Fine prose for a human. A poor fit for **one** embedding of the full talk. Even the first **3,000 characters** I pass into the compressor (`transcript_embed_max` in `fetch.py`) is already hundreds of tokens — before summarization, before the embedder ever sees the text.
 
 I needed a different architecture. Summarize first, embed second. **Compress-then-Embed**.
+
+Production RAG systems face the same fork: **chunk raw text** (many vectors, fragment-level retrieval) or **summarize then embed** (one vector, higher risk if the summary drops facts). Embedder context limits are why both paths exist; the tradeoff is index shape versus faithfulness to the source. I chose one vector per document for ArticleRecommender Phase 1 simplicity, which forced the compression question rather than hiding it behind chunking.
 
 ## The `text-compressor` Experiment
 

@@ -4,7 +4,7 @@ slug: specs-drive-tests-validate
 order: 9002
 date: 2026-06-19
 lastUpdated: 2026-06-21
-version: "1.7"
+version: "1.8"
 description: How I build agent-written software I can trust — user stories and SDD as the driver, unit/integration/E2E as the validator, lifecycle matrices for multi-role journeys, AQ for agents.
 cover: /blog/covers/specs-drive-tests-validate.png
 coverAlt: A specification document with R1 and R2 flows through a guarded arrow into a three-tier test pyramid with checkmarks — specs drive, tests validate.
@@ -165,7 +165,7 @@ When an agent proposes "add E2E for reschedule," I ask which matrix row it close
 
 ## Connect to marfago-labs
 
-The evaluation lab already enforced the same instinct at smaller scale. [The Minimum Credible Loop](./01-i-didnt-want-another-bookmark-app.md) shipped ArticleRecommender Phase 1 with a **≥95% pytest gate** and Playwright E2E in CI. Posts 02–06 added benchmark validators, gold-data invariants, and public evidence for model outputs.
+The evaluation lab already enforced the same instinct at smaller scale. [The Minimum Credible Loop](./01-i-didnt-want-another-bookmark-app.md) shipped ArticleRecommender Phase 1 with a **≥95% pytest gate** and Playwright E2E in CI. Posts 02–06 added benchmark validators, gold-data invariants, and public evidence for model outputs. [Four Faithfulness Checks on the Same Summary](./faithfulness-metrics-map.md) maps the compression scorecard metrics for readers who want the survey before the ResNet story in Part 3.
 
 The full-stack application applies that discipline to product behavior: not only "is the compression faithful?" but "can the user register, complete the workflow, and hit the right error when they should not have access?" Same walk-loop-sign model; a wider surface and more E2E journeys.
 

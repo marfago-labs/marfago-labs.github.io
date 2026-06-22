@@ -4,8 +4,8 @@ slug: overlap-is-not-faithfulness
 series: marfago-labs-origin
 order: 3
 date: 2026-06-08
-lastUpdated: 2026-06-13
-version: "1.8"
+lastUpdated: 2026-06-21
+version: "1.9"
 description: Why semantic similarity metrics give you false confidence, and how I built a multi-metric faithfulness scorecard.
 cover: /blog/covers/overlap-is-not-faithfulness.png
 coverAlt: Two overlapping teal circles beside a scorecard — overlap is not the same as faithfulness.
@@ -124,7 +124,7 @@ I did not reject compress-then-embed. I rejected **one green column** as a relea
 
 ModernBERT stays on the scorecard — it is a fast way to compare how "close" two compression models are. But the decision rule changed: a summary is trustworthy for the ArticleRecommender path only when **entity coverage, numeric match, and NLI faithfulness are acceptable together**, not when overlap alone looks good. On the May 2026 compare run, that ruled out treating any single model as "done." The best compressor still lost entities, numbers, or unsupported sentences on multiple papers while ModernBERT smiled.
 
-Compress-then-embed remains a hypothesis worth pursuing, but only behind a **multi-metric gate** I can re-run on the full 22-item corpus (12 arXiv + 10 YouTube). The arXiv slice proved the scorecard mechanics; the YouTube transcripts are the product-shaped stress test — long, messy, and full of names and numbers from talks I might actually ingest. Overlap metrics are a compass, not a contract.
+Compress-then-embed remains a hypothesis worth pursuing, but only behind a **multi-metric gate** I can re-run on the full 22-item corpus (12 arXiv + 10 YouTube). The arXiv slice proved the scorecard mechanics; the YouTube transcripts are the product-shaped stress test — long, messy, and full of names and numbers from talks I might actually ingest. Overlap metrics are a compass, not a contract. For a metrics map across all four checks on the same rows, see [Four Faithfulness Checks on the Same Summary](./faithfulness-metrics-map.md).
 
 The next bottleneck was obvious. Entity coverage is only as good as the NER backend underneath it. I needed real Named Entity Recognition — and I did not want to guess which one.
 

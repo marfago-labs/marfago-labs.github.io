@@ -18,3 +18,9 @@ website/.astro/
 
 # Cursor local
 .cursor/
+
+# Internal blog dev notes (never publish as-is)
+blog/_archive/
+
+# Local audit reports (may contain commit snippets)
+scripts/audit-reports/

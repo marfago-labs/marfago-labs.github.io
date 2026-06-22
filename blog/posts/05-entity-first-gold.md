@@ -4,8 +4,8 @@ slug: entity-first-gold
 series: marfago-labs-origin
 order: 5
 date: 2026-06-08
-lastUpdated: 2026-06-13
-version: "1.3"
+lastUpdated: 2026-06-21
+version: "1.4"
 description: LLMs can't count. How I solved character offset hallucinations using entity-first generation in ner-gold-generator.
 cover: /blog/covers/entity-first-gold.png
 coverAlt: Named entities anchored to character spans on a teal text strip — entity first, offsets second.
@@ -32,6 +32,8 @@ LLMs are good at reading and writing text. They are bad at counting characters. 
 When you ask an LLM to return the exact character start and end offsets of a word in a paragraph, it guesses. It returns JSON with offsets that are off by three characters, or points to a completely different instance of the word. If you use this as your gold truth to evaluate other models, you penalize accurate models for the LLM's inability to count.
 
 I refused to write a script to "fuzzy match" and fix the LLM's bad math. Patching bad offsets would have made the benchmark look clean while the foundation stayed rotten.
+
+That failure mode is well documented in LLM-as-annotator work: models produce plausible labels but unreliable span boundaries when asked to count characters in generated text. The durable pattern is to keep **structure in code** (entities, spans, validation) and let the model supply language — the same inversion used in constrained generation and tool-calling pipelines where the runtime owns invariants the model cannot reliably compute.
 
 I had to stop asking the LLM to do things it is fundamentally bad at.
 

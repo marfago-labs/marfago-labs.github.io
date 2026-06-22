@@ -4,8 +4,8 @@ slug: picking-a-ner-backend
 series: marfago-labs-origin
 order: 4
 date: 2026-06-08
-lastUpdated: 2026-06-13
-version: "1.3"
+lastUpdated: 2026-06-21
+version: "1.4"
 description: Comparing LLMs, BERT, and GLiNER in ner-detector. Why I chose Doc F1, and the latency bug that almost ruined the benchmark.
 cover: /blog/covers/picking-a-ner-backend.png
 coverAlt: Three teal backend stacks on a benchmark grid with latency and F1 markers — picking a NER backend with evidence.
@@ -51,7 +51,7 @@ My use case is different. I am doing *salient-entity* extraction. I only care ab
 
 For this system, that is the wrong headline metric. I still validate spans where the dataset requires them, but the product question is simpler: did the system find the entity that should drive downstream investigation?
 
-So I wrote [ADR 001](https://github.com/marfago-labs/ner-detector/blob/master/docs/adr/001-doc-f1-primary-metric.md) and made **Document-Level F1 (Doc F1)** my primary metric. Doc F1 simply asks: *Did the model extract the normalized text of the entity somewhere in this document?*
+NER benchmark papers and shared tasks typically report **exact span F1** because annotation quality and leaderboard ranking depend on precise boundaries. Product extraction often cares about a narrower question — did the salient handle appear anywhere in the document? — which is closer to **typed mention detection** than CoNLL-style span matching. I captured that product question in [ADR 001](https://github.com/marfago-labs/ner-detector/blob/master/docs/adr/001-doc-f1-primary-metric.md) and made **Document-Level F1 (Doc F1)** the primary metric: *Did the model extract the normalized text of the entity somewhere in this document?*
 
 ## The Latency Bug
 

@@ -21,6 +21,6 @@ describe("syncBlog", () => {
     );
 
     expect(synced).not.toMatch(/^slug:/m);
-    expect(synced).toContain('version: "1.6"');
+    expect(synced).toMatch(/version: "1\.\d+"/);
   });
 });

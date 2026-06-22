@@ -4,7 +4,7 @@ Stories about problems, tradeoffs, measured outcomes, and the discipline require
 
 **Series:** [Building an Evaluation Lab by Accident](./posts/00-series-index.md) — I wanted a tech briefing app. I ended up building open-source tools to measure whether the AI parts actually work. Four acts: the product, the metric traps, the infrastructure, and the operating model.
 
-Writing standards: [`.cursor/rules/docs-blog-writing.mdc`](../.cursor/rules/docs-blog-writing.mdc)
+Writing standards: [`.cursor/rules/docs-blog-writing.mdc`](../.cursor/rules/docs-blog-writing.mdc) — includes **External style references (Chip Huyen — adopt, don’t copy)** for production-minded tone without copying her format.
 
 ## Posts (read in order)
 
@@ -27,6 +27,7 @@ Writing standards: [`.cursor/rules/docs-blog-writing.mdc`](../.cursor/rules/docs
 | --- | --- |
 | [To Be a Better AI Engineer, Become an AQ Engineer](./posts/aq-better-ai-engineer.md) | Agent quality — server-owned progress, scenarios, parity |
 | [Specs Drive. Tests Validate.](./posts/specs-drive-tests-validate.md) | SDD + application QA — specs set intent, tests enforce it, lifecycle matrix for multi-role E2E |
+| [Four Faithfulness Checks on the Same Summary](./posts/faithfulness-metrics-map.md) | Metrics map for compress-then-embed — overlap, entity, numeric, NLI on the same rows |
 
 ## Conventions
 

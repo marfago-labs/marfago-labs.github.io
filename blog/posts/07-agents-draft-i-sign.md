@@ -4,8 +4,8 @@ slug: agents-draft-i-sign
 series: marfago-labs-origin
 order: 7
 date: 2026-06-09
-lastUpdated: 2026-06-19
-version: "1.3"
+lastUpdated: 2026-06-21
+version: "1.4"
 description: The agent walk, the control loop, and the sign — how I explore with agents first, then constrain output with tests, benchmarks, and public evidence.
 cover: /blog/covers/agents-draft-i-sign.png
 coverAlt: A winding teal path through a stylized city map — the agent walk before the build.
@@ -71,13 +71,9 @@ The walk feeds the loop. The loop earns the signature.
 
 The important box is not "Agent draft." That is the cheap part now.
 
-The important boxes are "Agent walk" and "Trustworthy?" Engineering still happens when you explore before you commit, and when you refuse to accept output that has not earned trust.
+What actually saved the lab was exploring before committing — the walk that surfaced which metric mattered — and refusing to merge when the scorecard still failed on the same rows ModernBERT had passed (see Evidence 1 below). An agent can write a CI workflow, but the workflow has to run the real tests. It can draft a benchmark report, but the report has to survive the cache fix and public re-run in Evidence 2. It can write a blog post, but the post cannot invent a result because it sounds good; Evidence 4 is where I applied the same rules to prose.
 
-In this lab, an agent can write a CI workflow, but the workflow has to run the real tests. It can draft a benchmark report, but the benchmark has to survive scrutiny. It can write a blog post, but the post cannot invent a result because it sounds good.
-
-Generation is not the standard. Evidence is.
-
-When "Trustworthy?" comes back no, the fix is not always another draft. Sometimes the map was wrong. You walk again.
+When "Trustworthy?" comes back no, the fix is not always another draft. Sometimes the map was wrong — as when I thought I needed a bookmark app and the walk revealed an evaluation lab instead. You walk again.
 
 ## Evidence 1: Green Was Not Enough
 

@@ -4,8 +4,8 @@ slug: publish-the-evidence-loop
 series: marfago-labs-origin
 order: 6
 date: 2026-06-08
-lastUpdated: 2026-06-13
-version: "1.2"
+lastUpdated: 2026-06-21
+version: "1.3"
 description: Separating the generator from ner-dataset. CI validation, live stats, and closing the loop.
 cover: /blog/covers/publish-the-evidence-loop.png
 coverAlt: A closed teal loop from generator to dataset to CI checks and back — publishing the evidence.
@@ -16,6 +16,8 @@ coverAlt: A closed teal loop from generator to dataset to CI checks and back —
 You can claim your NER pipeline is highly accurate. You can show a demo of it extracting entities from a YouTube video. But if you cannot provide the dataset, the evaluation harness, and the exact metrics used to prove that claim, you are doing marketing, not engineering.
 
 One of the core tenets of marfago-labs is: **No metric, no merit.** Private benchmarks are theatre. I had to make the evidence public.
+
+MLOps culture has moved the same direction for model quality: reproducible eval harnesses, versioned datasets, and CI-published reports others can re-run. A scorecard that lives only in a notebook or a slide deck cannot be challenged — and if it cannot be challenged, it cannot be trusted as a release gate. Public Pages reports and failing CI on bad gold are how this lab implements that habit at small scale.
 
 ## The Artifact: `ner-dataset`
 
