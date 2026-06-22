@@ -4,8 +4,8 @@ slug: i-didnt-want-another-bookmark-app
 series: marfago-labs-origin
 order: 1
 date: 2026-06-08
-lastUpdated: 2026-06-13
-version: "1.2"
+lastUpdated: 2026-06-21
+version: "1.6"
 description: "Why ArticleRecommender exists, what Phase 1 actually shipped, and why I deliberately stopped before building the smart enrichment."
 cover: /blog/covers/i-didnt-want-another-bookmark-app.png
 coverAlt: A tight teal loop through document, storage, and search — the minimum credible path before the larger pipeline.
@@ -19,9 +19,11 @@ What I actually wanted was a system that watches the video, extracts those names
 
 That was the north star for **ArticleRecommender**: *Signal → Investigate → Connect → Brief.*
 
+I did not want another bookmark app. The volume of technical signal I follow — arXiv papers, YouTube talks, GitHub releases — outruns what I can process in a week. Bookmarks solve storage: they remember the URL. They do not extract the product names, link the related papers, or tell me whether GraphRAG is worth a spike this sprint. A week later I was rewatching chunks of the talk or redoing the same searches from memory because the saved link never captured what mattered. Phase 1 had to answer a smaller question first: before the system can investigate and brief on its own, can I reliably capture a source, retrieve it, and chat with it?
+
 ## Phase 1: Proving the Foundation
 
-Before you build autonomous agents, you need plumbing. I defined Phase 1 as the minimum credible loop: can I save a document, chat with it, and search for it later?
+Before you build autonomous agents, you need plumbing. I defined Phase 1 as that minimum credible loop: save a document, chat with it, search for it later.
 
 I built a FastAPI backend and a React frontend, with Agno agents configured via YAML. For storage I made a deliberate choice: PostgreSQL as the single system of record. Keyword search uses `tsvector`; semantic search uses `pgvector` — embed the document text, store one vector per row, retrieve by nearest neighbors at query time. I skipped standing up Elasticsearch on day one because I did not want the operational overhead of syncing two systems of truth. That one-vector-per-document shape would matter as soon as ingest sources outgrew the embedder's input window.
 
@@ -44,14 +46,13 @@ To generate a briefing from a web of sources, the system has to enrich incoming 
 
 Before I could build the "smart" recommender, I had to solve the evaluation problem: prove I could compress a document faithfully, and prove I could extract entities reliably and quickly.
 
-So I stopped building product features and started building the discipline around them — evaluation, gold data, benchmarks, and the mechanisms that would tell me when an AI-assisted pipeline was actually trustworthy.
+So I stopped widening the ingest path — anything that would summarize, embed, or enrich into retrieval — and started building the discipline to measure it: evaluation, gold data, benchmarks, and the mechanisms that would tell me when an AI-assisted pipeline was actually trustworthy.
 
 ## Takeaways
 
-- **North star vs Phase 1** — *Signal → Investigate → Connect → Brief* is the goal; Phase 1 only proves save, chat, and search — deliberately, not accidentally.
-- **One database, two search modes** — Postgres with `pgvector` for semantic neighbors and `tsvector` for keywords; one vector per document until ingest sources outgrow the embedder window.
-- **Deferral is a decision** — Collectors, GraphRAG synthesis, and autonomous enrichment wait until compression faithfulness and entity extraction are measurable, not vibes-based.
-- **Poisoned retrieval** — A hallucinated summary embedded into `pgvector` corrupts everything downstream; evaluation is not a nice-to-have, it is a release gate.
+- **Minimum credible loop** — Prove capture, retrieval, and reasoning on real sources before you automate investigation. How much proof you need scales with blast radius; the order does not — intelligence on an unproven substrate optimizes the wrong layer.
+- **The index is a trust boundary** — When enrichment writes into retrieval, errors become ground truth for every later query, not a bad answer you can patch in the UI. That write path deserves scorecards before you widen it.
+- **Name the blocker, then build the falsifier** — I did not freeze the product; I paused enrichment I could not test. The open questions were specific — is compression faithful, is extraction fast enough — and the honest next work was the smallest evaluation that could answer them.
 
 ## The Evidence
 

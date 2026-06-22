@@ -58,7 +58,7 @@ This site links to those reports; it does not embed them.
 From the workspace root (after committing):
 
 ```powershell
-cd f:\workspace\marfago-labs
+cd <workspace-root>
 gh repo create marfago-labs/marfago-labs.github.io --public --description "marfago-labs org hub (Astro + blog)"
 git remote add origin https://github.com/marfago-labs/marfago-labs.github.io.git
 git push -u origin master
