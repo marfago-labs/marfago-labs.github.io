@@ -30,7 +30,7 @@ Run across every local repo in the workspace:
 .\scripts\audit-git-history.ps1
 ```
 
-The script runs **gitleaks** on full history, checks for `.env` commits, secret patterns in patches, Windows path leaks (`F:\workspace\...`, `C:\Users\...`), sensitive filenames, large blobs, and currently tracked sensitive paths. Reports are written to `scripts/audit-reports/` (gitignored). Exit code **0** only when there are zero BLOCK findings.
+The script runs **gitleaks** on full history, checks for `.env` commits, secret patterns in patches, machine-local Windows path leaks (drive letters and user-profile directories), sensitive filenames, large blobs, and currently tracked sensitive paths. Reports are written to `scripts/audit-reports/` (gitignored). Exit code **0** only when there are zero BLOCK findings.
 
 ## If a key is exposed
 
