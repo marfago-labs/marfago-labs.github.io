@@ -27,11 +27,12 @@ export function inlineDiagramImages(html, diagramsDir = DIAGRAMS_SRC) {
 }
 
 /** Remark plugin: inline SVG diagrams referenced from markdown HTML blocks. */
-export function remarkInlineDiagrams() {
+export function remarkInlineDiagrams(options = {}) {
+  const diagramsDir = options.diagramsDir ?? DIAGRAMS_SRC;
   return (tree) => {
     visit(tree, "html", (node) => {
       if (!node.value.includes("/blog/diagrams/")) return;
-      node.value = inlineDiagramImages(node.value);
+      node.value = inlineDiagramImages(node.value, diagramsDir);
     });
   };
 }

@@ -24,3 +24,10 @@ repos:
         language: system
         pass_filenames: false
         files: ^website/
+
+      - id: website-test
+        name: website unit tests (coverage)
+        entry: bash -c "cd website && npm test"
+        language: system
+        pass_filenames: false
+        files: ^website/

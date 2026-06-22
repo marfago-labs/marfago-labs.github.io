@@ -4,3 +4,6 @@ dist/
 coverage/
 src/content/blog/
 .DS_Store
+.env
+.env.*
+!.env.example
