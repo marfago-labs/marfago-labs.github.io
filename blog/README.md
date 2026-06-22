@@ -36,7 +36,6 @@ Writing standards: [`.cursor/rules/docs-blog-writing.mdc`](../.cursor/rules/docs
 - **Series posts:** `blog/posts/NN-short-slug.md` with `series: marfago-labs-origin` and `order: N` matching the prefix.
 - **Standalone posts:** `blog/posts/short-slug.md` (no numeric prefix), omit `series`, use `order: 9001+`.
 - **Front matter:** `title`, `slug`, `series`, `order`, `date`, `description` on each post under `blog/posts/`.
-- **Archive:** `blog/_archive/` — old changelog notes superseded by narrative posts.
 
 ## Evidence links (live)
 

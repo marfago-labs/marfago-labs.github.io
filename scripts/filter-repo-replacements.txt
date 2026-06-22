@@ -1,6 +1,0 @@
-regex:F:[/\\]workspace[/\\]marfago-labs[/\\]ner-detector[/\\]==>
-regex:F:[/\\]workspace[/\\]marfago-labs[/\\]==><workspace-root>/
-regex:f:[/\\]workspace[/\\]marfago-labs[/\\]ner-detector[/\\]==>
-regex:f:[/\\]workspace[/\\]marfago-labs[/\\]==><workspace-root>/
-regex:C:[/\\]Users[/\\]fagom[/\\]==><user-home>/
-regex:c:[/\\]Users[/\\]fagom[/\\]==><user-home>/

@@ -145,7 +145,7 @@ foreach ($Repo in $RepoPaths) {
         win_users     = 'C:\\Users\\'
         username      = '\bfagom\b'
     }
-    $pathExclude = @('scripts/audit-git-history.ps1', 'scripts/filter-repo-replacements.txt', 'SECURITY.md')
+    $pathExclude = @('scripts/audit-git-history.ps1', 'SECURITY.md')
     $seenPathHits = @{}
     foreach ($pname in $pathPatterns.Keys) {
         $pat = $pathPatterns[$pname]
