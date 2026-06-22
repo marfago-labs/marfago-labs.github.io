@@ -91,8 +91,8 @@ The code is evidence. This page is the argument.
 
 ## Elsewhere
 
-[LinkedIn](https://www.linkedin.com/in/marco-fago/) - where I think in public.  
-[@marfago](https://github.com/marfago) - experiments and open contributions.  
+[LinkedIn](https://www.linkedin.com/in/marco-fago/) - where I think in public.
+[@marfago](https://github.com/marfago) - experiments and open contributions.
 [marfago-labs](https://github.com/marfago-labs) - the lab on GitHub.
 
 Technical reviewer of [*Agentic Design Patterns*](https://www.amazon.com/Agentic-Design-Patterns-Hands-Intelligent/dp/3032014018) (Antonio Gulli).
