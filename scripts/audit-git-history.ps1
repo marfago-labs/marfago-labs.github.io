@@ -1,4 +1,4 @@
-# Deep git history audit — secrets, privacy paths, sensitive files (all commits).
+# Deep git history audit - secrets, privacy paths, sensitive files (all commits).
 # Usage: .\scripts\audit-git-history.ps1
 # Exit 0 = PASS, 1 = BLOCK findings
 
@@ -32,6 +32,26 @@ function Test-EnvExamplePath([string]$Path) {
     return $Path -match '\.env\.example$' -or $Path -match '\.env\..*\.example$'
 }
 
+function Test-ScannerDefinitionLine([string]$Line) {
+    return $Line -match '(pathPatterns|secretPatterns|private_key\s+=|win_workspace|win_users|username\s+=|<workspace-root>|<user-home>)'
+}
+
+function Test-DiffHasNonScannerHit([string]$Sha, [string]$Pattern, [string[]]$ScannerFiles) {
+    $currentFile = ""
+    $found = $false
+    git show $Sha -U0 --no-color 2>$null | ForEach-Object {
+        if ($_ -match '^diff --git a/(.+?) b/(.+)$') {
+            $currentFile = $Matches[1]
+        }
+        if ($_ -match '^\+' -and $_ -match $Pattern) {
+            if (($ScannerFiles -notcontains $currentFile) -or -not (Test-ScannerDefinitionLine $_)) {
+                $found = $true
+            }
+        }
+    }
+    return $found
+}
+
 function Test-PlaceholderSecret([string]$Line) {
     $t = $Line.Trim()
     if ($t -match '(?i)(your-key|placeholder|changeme|xxx+|example\.com|localhost|articlerecommender@localhost)') { return $true }
@@ -40,33 +60,41 @@ function Test-PlaceholderSecret([string]$Line) {
     return $false
 }
 
+$scannerFiles = @('scripts/audit-git-history.ps1')
+
 foreach ($Repo in $RepoPaths) {
     $name = $Repo.Name
     $path = $Repo.Path
 
     if (-not (Test-Path (Join-Path $path ".git"))) {
-        Add-Caution("$name`: not a git repository — skipped")
+        Add-Caution("${name}: not a git repository - skipped")
         continue
     }
 
     Push-Location $path
     $commitCount = (git rev-list --all 2>$null | Measure-Object -Line).Lines
-    Add-Pass("$name`: $commitCount commits")
+    Add-Pass("${name}: $commitCount commits")
 
     # Gitleaks
     $gitleaksArgs = @("detect", "--source", ".", "--verbose")
     if (Test-Path ".gitleaks.toml") {
         $gitleaksArgs += @("--config", ".gitleaks.toml")
     }
-    $gitleaksOut = & gitleaks @gitleaksArgs 2>&1
-    $gitleaksExit = $LASTEXITCODE
+    $prevEap = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        $gitleaksOut = & gitleaks @gitleaksArgs 2>&1 | Out-String
+        $gitleaksExit = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $prevEap
+    }
     if ($gitleaksExit -ne 0) {
-        Add-Block("$name`: GITLEAKS failed (exit $gitleaksExit)")
-        $gitleaksOut | Select-String -Pattern "Finding|leak|Secret|File:" | ForEach-Object {
+        Add-Block("${name}: GITLEAKS failed (exit $gitleaksExit)")
+        $gitleaksOut -split "`n" | Select-String -Pattern "Finding|leak|Secret|File:" | ForEach-Object {
             Add-Block("  $($_.Line.Trim())")
         }
     } else {
-        Add-Pass("$name`: gitleaks clean")
+        Add-Pass("${name}: gitleaks clean")
     }
 
     # .env in history (not examples)
@@ -77,7 +105,7 @@ foreach ($Repo in $RepoPaths) {
             if ($line -match '^COMMIT ') {
                 $currentCommit = $line
             } elseif ($line -match '\.env' -and -not (Test-EnvExamplePath $line)) {
-                Add-Block("$name`: ENV_IN_HISTORY $currentCommit -> $line")
+                Add-Block("${name}: ENV_IN_HISTORY $currentCommit -> $line")
             }
         }
     }
@@ -102,25 +130,39 @@ foreach ($Repo in $RepoPaths) {
             $sha = ($h -split ' ', 2)[0]
             $diffLine = git show $sha -U0 2>$null | Select-String -Pattern $pat | Select-Object -First 1
             if ($diffLine -and (Test-PlaceholderSecret $diffLine.Line)) {
-                Add-Caution("$name`: HISTORY_$pname (placeholder) $h")
+                Add-Caution("${name}: HISTORY_$pname (placeholder) $h")
+            } elseif (-not (Test-DiffHasNonScannerHit $sha $pat $scannerFiles)) {
+                Add-Caution("${name}: HISTORY_$pname (scanner definition) $h")
             } else {
-                Add-Block("$name`: HISTORY_$pname $h")
+                Add-Block("${name}: HISTORY_$pname $h")
                 if ($diffLine) { Add-Block("  snippet: $($diffLine.Line.Trim().Substring(0, [Math]::Min(120, $diffLine.Line.Trim().Length)))") }
             }
         }
     }
 
     $pathPatterns = @{
-        win_workspace = 'F:\\\\workspace\\\\marfago-labs'
-        win_users     = 'C:\\\\Users\\\\'
-        username      = 'fagom'
+        win_workspace = 'F:\\workspace\\marfago-labs'
+        win_users     = 'C:\\Users\\'
+        username      = '\bfagom\b'
     }
+    $pathExclude = @('scripts/audit-git-history.ps1', 'scripts/filter-repo-replacements.txt', 'SECURITY.md')
+    $seenPathHits = @{}
     foreach ($pname in $pathPatterns.Keys) {
         $pat = $pathPatterns[$pname]
-        $hits = git log --all -G $pat --oneline 2>$null
-        if (-not $hits) { continue }
-        foreach ($h in ($hits -split "`n")) {
-            if ($h) { Add-Block("$name`: HISTORY_PATH_$pname $h") }
+        git rev-list --all 2>$null | ForEach-Object {
+            $sha = $_
+            $grepPat = if ($pname -eq 'username') { 'fagom' } else { $pat }
+            $fileHits = @()
+            git grep -I -l $grepPat $sha 2>$null | ForEach-Object {
+                $file = if ($_ -match ':([^:]+)$') { $Matches[1] } else { $_ }
+                if ($pathExclude -notcontains $file) { $fileHits += $file }
+            }
+            if ($fileHits.Count -eq 0) { return }
+            $key = "${pname}:$sha"
+            if ($seenPathHits.ContainsKey($key)) { return }
+            $seenPathHits[$key] = $true
+            $oneline = git log -1 --oneline $sha 2>$null
+            Add-Block("${name}: HISTORY_PATH_$pname $oneline")
         }
     }
 
@@ -129,7 +171,7 @@ foreach ($Repo in $RepoPaths) {
         $hits = git log --all --full-history --oneline -- "**/$fname" $fname 2>$null
         if ($hits) {
             foreach ($h in ($hits -split "`n")) {
-                if ($h) { Add-Block("$name`: HISTORY_FILE_$fname $h") }
+                if ($h) { Add-Block("${name}: HISTORY_FILE_$fname $h") }
             }
         }
     }
@@ -147,17 +189,17 @@ foreach ($Repo in $RepoPaths) {
         Select-Object -First 5 |
         ForEach-Object {
             $mb = [math]::Round($_.Size / 1MB, 2)
-            Add-Caution("$name`: LARGE_BLOB ${mb}MB $($_.Path)")
+            Add-Caution("${name}: LARGE_BLOB ${mb}MB $($_.Path)")
         }
 
     # Currently tracked sensitive paths
     git ls-files 2>$null | ForEach-Object {
         $f = $_
         if ($f -match '(^|/)\.env$' -and -not (Test-EnvExamplePath $f)) {
-            Add-Block("$name`: TRACKED_ENV $f")
+            Add-Block("${name}: TRACKED_ENV $f")
         }
         if ($f -match 'website/coverage/|blog/_archive/|(^|/)gold\.log$|benchmark/results/|backend/data/|text-compressor/results/') {
-            Add-Block("$name`: TRACKED_SENSITIVE $f")
+            Add-Block("${name}: TRACKED_SENSITIVE $f")
         }
     }
 
@@ -198,7 +240,7 @@ $report += @("", "## Sign-off", "")
 if ($passed) {
     $report += "**PASS:** $signOff"
 } else {
-    $report += "**FAILED** — resolve BLOCK items and re-run."
+    $report += "**FAILED** - resolve BLOCK items and re-run."
 }
 
 $report | Set-Content -Path $ReportPath -Encoding utf8
