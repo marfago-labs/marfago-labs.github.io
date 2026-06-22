@@ -36,9 +36,12 @@ jobs:
 
       - name: Install, check, and build
         working-directory: website
+        env:
+          PUBLIC_GA_MEASUREMENT_ID: G-SXH9QJQQQL
         run: |
           npm ci
           npm run check
+          npm test
           npm run build
 
       - uses: actions/upload-pages-artifact@v4

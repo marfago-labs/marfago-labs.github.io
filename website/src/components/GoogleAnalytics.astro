@@ -1,0 +1,25 @@
+---
+import {
+  gtagScriptSrc,
+  shouldEnableGoogleAnalytics,
+} from "../lib/googleAnalytics";
+
+const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? "";
+const enabled = shouldEnableGoogleAnalytics(import.meta.env.PROD, gaId);
+---
+
+{
+  enabled && (
+    <>
+      <script async src={gtagScriptSrc(gaId)} />
+      <script is:inline define:vars={{ gaId }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          dataLayer.push(arguments);
+        }
+        gtag("js", new Date());
+        gtag("config", gaId);
+      </script>
+    </>
+  )
+}

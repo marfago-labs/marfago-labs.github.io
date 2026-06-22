@@ -74,46 +74,57 @@ export function clearAstroContentCache() {
 }
 
 /** @returns {number} post count synced, or 0 if source missing */
-export function syncBlog({ quiet = false, invalidateDiagramCache = false } = {}) {
-  if (!fs.existsSync(srcDir)) {
+export function syncBlog({
+  quiet = false,
+  invalidateDiagramCache = false,
+  roots,
+} = {}) {
+  const blogSrc = roots?.srcDir ?? srcDir;
+  const blogDest = roots?.destDir ?? destDir;
+  const blogCoversSrc = roots?.coversSrc ?? coversSrc;
+  const blogCoversDest = roots?.coversDest ?? coversDest;
+  const blogDiagramsSrc = roots?.diagramsSrc ?? diagramsSrc;
+  const blogDiagramsDest = roots?.diagramsDest ?? diagramsDest;
+
+  if (!fs.existsSync(blogSrc)) {
     if (!quiet) {
-      console.warn(`sync-blog: source missing (${srcDir}); skipping`);
+      console.warn(`sync-blog: source missing (${blogSrc}); skipping`);
     }
     return 0;
   }
 
-  fs.mkdirSync(destDir, { recursive: true });
+  fs.mkdirSync(blogDest, { recursive: true });
 
-  const files = fs.readdirSync(srcDir).filter((f) => f.endsWith(".md"));
+  const files = fs.readdirSync(blogSrc).filter((f) => f.endsWith(".md"));
   const sourceSet = new Set(files);
 
-  for (const old of fs.readdirSync(destDir)) {
+  for (const old of fs.readdirSync(blogDest)) {
     if (old.endsWith(".md") && !sourceSet.has(old)) {
-      safeUnlink(path.join(destDir, old));
+      safeUnlink(path.join(blogDest, old));
     }
   }
   const fileToSlug = {};
   for (const file of files) {
-    const raw = fs.readFileSync(path.join(srcDir, file), "utf8");
+    const raw = fs.readFileSync(path.join(blogSrc, file), "utf8");
     const slug = parseSlug(raw);
     if (slug) fileToSlug[file] = slug;
   }
 
   for (const file of files) {
-    const raw = fs.readFileSync(path.join(srcDir, file), "utf8");
+    const raw = fs.readFileSync(path.join(blogSrc, file), "utf8");
     const parts = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
     if (!parts) {
-      fs.copyFileSync(path.join(srcDir, file), path.join(destDir, file));
+      fs.copyFileSync(path.join(blogSrc, file), path.join(blogDest, file));
       continue;
     }
     const [, fm, body] = parts;
     const cleanedFm = stripSlugFromFrontmatter(fm);
     const rewritten = rewriteLinks(body, fileToSlug);
-    fs.writeFileSync(path.join(destDir, file), `---\n${cleanedFm}\n---\n${rewritten}`);
+    fs.writeFileSync(path.join(blogDest, file), `---\n${cleanedFm}\n---\n${rewritten}`);
   }
 
-  syncAssets(coversSrc, coversDest, "covers", quiet);
-  const diagramCount = syncAssets(diagramsSrc, diagramsDest, "diagrams", quiet);
+  syncAssets(blogCoversSrc, blogCoversDest, "covers", quiet);
+  const diagramCount = syncAssets(blogDiagramsSrc, blogDiagramsDest, "diagrams", quiet);
   if (invalidateDiagramCache && diagramCount > 0) {
     clearAstroContentCache();
   }
@@ -124,7 +135,11 @@ export function syncBlog({ quiet = false, invalidateDiagramCache = false } = {})
   return files.length;
 }
 
+/* v8 ignore start */
 const isCli = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isCli) {
   syncBlog({ invalidateDiagramCache: true });
 }
+/* v8 ignore stop */
+
+export { parseSlug, rewriteLinks, stripSlugFromFrontmatter };

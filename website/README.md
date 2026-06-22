@@ -14,12 +14,23 @@ npm run dev
 
 Open **http://localhost:4321**
 
+Analytics (production builds only): set `PUBLIC_GA_MEASUREMENT_ID` (see `.env.example`). CI passes this in [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml).
+
 Production-like check:
 
 ```bash
 npm run build
 npm run preview
 ```
+
+## Quality checks
+
+```bash
+npm run check    # Astro / TypeScript
+npm test         # Vitest with ≥95% coverage on src/lib + blog scripts
+```
+
+Coverage is scoped to testable units (`src/lib/`, `scripts/sync-blog.mjs`, `scripts/remark-inline-diagrams.mjs`), not Astro pages.
 
 ## Publish
 

@@ -11,7 +11,7 @@
     "preview": "astro preview",
     "preview:lan": "astro preview --host",
     "check": "astro check",
-    "test": "vitest run",
+    "test": "vitest run --coverage",
     "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
