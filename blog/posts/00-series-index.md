@@ -4,8 +4,8 @@ slug: series-index
 series: marfago-labs-origin
 order: 0
 date: 2026-06-08
-lastUpdated: 2026-06-21
-version: "1.4"
+lastUpdated: 2026-06-22
+version: "1.5"
 description: How a personal tech news recommender forced me to build an open-source evaluation lab, and what it taught me about building with AI under engineering discipline.
 cover: /blog/covers/series-index.png
 coverAlt: A branching teal path through layered lab instruments — an evaluation stack built one experiment at a time.
@@ -73,8 +73,8 @@ Future in-series chapters will use **`08+`** filenames and `order` values (e.g. 
 
 ## Further reading (standalone)
 
-[To Be a Better AI Engineer, Become an AQ Engineer](./aq-better-ai-engineer.md) — agent quality for multi-turn systems: server-owned progress, scenario contracts, and parity checks. Same discipline as this series, applied to conversational agents rather than single-shot compression or NER.
+[Agent Quality Engineering: Grade the Protocol, Not the Chat](./aq-better-ai-engineer.md) — agent quality for multi-turn systems: server-owned progress, scenario contracts, and parity checks. Same discipline as this series, applied to conversational agents rather than single-shot compression or NER.
 
 [Specs Drive. Tests Validate.](./specs-drive-tests-validate.md) — how I ship a large agent-written application: specification-driven acceptance criteria, application QA at scale, lifecycle coverage matrices for multi-role E2E, and AQ as an extra layer — not a substitute for specs.
 
-[Four Faithfulness Checks on the Same Summary](./faithfulness-metrics-map.md) — survey map for the compression scorecard: what overlap, entity, numeric, and NLI each measure on the same summaries (companion to Act II, not a replacement for Part 3).
+[Did the Summary Keep the Important Bits?](./faithfulness-metrics-map.md) — plain-language map for the compression scorecard: four checks on the same summaries (sounds similar, names, numbers, sentence truth). Companion to Act II; the ResNet story is still in Part 3.

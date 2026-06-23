@@ -43,11 +43,11 @@ Push `blog/`, `website/`, and `.github/` together. Enable **Settings â†’ Pages â
 
 ## Evidence links
 
-Repo CI publishes dashboards to GitHub Pages **when the repo is public**:
+Live dashboards from public repo CI:
 
 | Artifact | Pages URL | Repo |
 |----------|-----------|------|
 | Dataset stats | https://marfago-labs.github.io/ner-dataset/ | [ner-dataset](https://github.com/marfago-labs/ner-dataset) |
 | NER benchmark | https://marfago-labs.github.io/ner-detector/ | [ner-detector](https://github.com/marfago-labs/ner-detector) |
 
-The org hub links to repos and the pipeline overview; it does not embed those reports.
+Also public: [ner-gold-generator](https://github.com/marfago-labs/ner-gold-generator). The org hub links to repos and the pipeline overview; it does not embed those reports.

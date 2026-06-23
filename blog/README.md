@@ -25,9 +25,9 @@ Writing standards: [`.cursor/rules/docs-blog-writing.mdc`](../.cursor/rules/docs
 
 | Title | File |
 | --- | --- |
-| [To Be a Better AI Engineer, Become an AQ Engineer](./posts/aq-better-ai-engineer.md) | Agent quality — server-owned progress, scenarios, parity |
+| [Agent Quality Engineering: Grade the Protocol, Not the Chat](./posts/aq-better-ai-engineer.md) | AQ — server-owned progress, scenarios, parity (not prompt craft alone) |
 | [Specs Drive. Tests Validate.](./posts/specs-drive-tests-validate.md) | SDD + application QA — specs set intent, tests enforce it, lifecycle matrix for multi-role E2E |
-| [Four Faithfulness Checks on the Same Summary](./posts/faithfulness-metrics-map.md) | Metrics map for compress-then-embed — overlap, entity, numeric, NLI on the same rows |
+| [Did the Summary Keep the Important Bits?](./posts/faithfulness-metrics-map.md) | ELI5 map — four compression checks (similar, names, numbers, truth) on the same rows |
 
 ## Conventions
 
@@ -39,9 +39,11 @@ Writing standards: [`.cursor/rules/docs-blog-writing.mdc`](../.cursor/rules/docs
 
 ## Evidence links (live)
 
-- [Dataset stats](https://marfago-labs.github.io/ner-dataset/) — when `ner-dataset` repo is public and Pages is enabled
-- [NER benchmark report](https://marfago-labs.github.io/ner-detector/) — when `ner-detector` repo is public and Pages is enabled
-- [ner-gold-generator](https://github.com/marfago-labs/ner-gold-generator) · [ner-dataset](https://github.com/marfago-labs/ner-dataset) · [ner-detector](https://github.com/marfago-labs/ner-detector)
+- [Dataset stats](https://marfago-labs.github.io/ner-dataset/) — live dashboard from `ner-dataset` CI
+- [NER benchmark report](https://marfago-labs.github.io/ner-detector/) — live report from `ner-detector` CI
+- [ner-gold-generator](https://github.com/marfago-labs/ner-gold-generator) · [ner-dataset](https://github.com/marfago-labs/ner-dataset) · [ner-detector](https://github.com/marfago-labs/ner-detector) — all public
 - [marfago-labs org hub](https://marfago-labs.github.io)
+
+**Work in progress (no public evidence yet):** ArticleRecommender, text-compressor — named in the series; repos not open for review.
 
 **Site:** `website/` (Astro) — `npm run dev` in `website/` previews locally; deploys to [marfago-labs.github.io](https://marfago-labs.github.io) via GitHub Actions. These markdown files remain the source of truth.

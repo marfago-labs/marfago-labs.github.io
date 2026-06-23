@@ -22,7 +22,7 @@ I am building a full-stack application in parallel with the open-source evaluati
 
 **QA** is the familiar application test pyramid: unit and component tests on business logic, API handler tests, browser E2E for user-visible flows, CI gates on coverage and lint. The tests are the validator for the spec's acceptance blocks.
 
-**AQ (agent quality)** is the extra lane when conversational agents own multi-turn state. I covered that separately in [To Be a Better AI Engineer, Become an AQ Engineer](./aq-better-ai-engineer.md). AQ validates protocol over turns; QA validates that the app lets the user finish.
+**AQ (agent quality)** is the extra lane when conversational agents own multi-turn state. I covered that separately in [Agent Quality Engineering: Grade the Protocol, Not the Chat](./aq-better-ai-engineer.md). AQ validates protocol over turns; QA validates that the app lets the user finish.
 
 | Lane | Drives or validates? | Question |
 |------|----------------------|----------|
@@ -165,7 +165,7 @@ When an agent proposes "add E2E for reschedule," I ask which matrix row it close
 
 ## Connect to marfago-labs
 
-The evaluation lab already enforced the same instinct at smaller scale. [The Minimum Credible Loop](./01-i-didnt-want-another-bookmark-app.md) shipped ArticleRecommender Phase 1 with a **≥95% pytest gate** and Playwright E2E in CI. Posts 02–06 added benchmark validators, gold-data invariants, and public evidence for model outputs. [Four Faithfulness Checks on the Same Summary](./faithfulness-metrics-map.md) maps the compression scorecard metrics for readers who want the survey before the ResNet story in Part 3.
+The evaluation lab already enforced the same instinct at smaller scale. [The Minimum Credible Loop](./01-i-didnt-want-another-bookmark-app.md) shipped ArticleRecommender Phase 1 with a **≥95% pytest gate** and Playwright E2E in CI. Posts 02–06 added benchmark validators, gold-data invariants, and public evidence for model outputs. [Did the Summary Keep the Important Bits?](./faithfulness-metrics-map.md) maps the compression scorecard in plain language for readers who want the four-check overview before the ResNet story in Part 3.
 
 The full-stack application applies that discipline to product behavior: not only "is the compression faithful?" but "can the user register, complete the workflow, and hit the right error when they should not have access?" Same walk-loop-sign model; a wider surface and more E2E journeys.
 
@@ -189,6 +189,6 @@ Specs drive. Tests validate. Agents draft. I still sign.
 ## Related reading
 
 - [Agents Draft. I Sign.](./07-agents-draft-i-sign.md) — walk, loop, sign operating model.
-- [To Be a Better AI Engineer, Become an AQ Engineer](./aq-better-ai-engineer.md) — scenarios, parity, progress truth (agent lane only).
+- [Agent Quality Engineering: Grade the Protocol, Not the Chat](./aq-better-ai-engineer.md) — scenarios, parity, progress truth (agent lane only).
 - [The Minimum Credible Loop](./01-i-didnt-want-another-bookmark-app.md) — ArticleRecommender pytest + Playwright gates at lab scale.
 - [Building an Evaluation Lab by Accident](./00-series-index.md) — public measurement infrastructure for model outputs.
