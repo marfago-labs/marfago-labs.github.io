@@ -33,6 +33,7 @@ Writing standards: [`.cursor/rules/docs-blog-writing.mdc`](../.cursor/rules/docs
 
 - **Voice:** first person (*I built*, *I decided*) — solo lab; the author owns the calls and the numbers. Use *you* for general engineering patterns.
 - **Drafting:** posts and diagrams are drafted with [Cursor](https://cursor.com), then edited and fact-checked against cited repos and benchmarks. Agents propose; the author signs. Disclose once on the site (About + blog index), not on every post.
+- **Freshness:** pre-commit runs `website/scripts/bump-content-freshness.mjs` on each `blog/posts/*.md` and mapped site pages (`index`, `about`, `blog/`, `projects/`) — bumps `lastUpdated` and patch `version` only when that file's substantive content changes (not when unrelated code or other pages change). `date` stays first-publish; edit `site-pages.ts` entries only via that hook when the matching `.astro` file changes. One-shot catch-up after bulk edits: `npm run backfill-freshness` in `website/` (uses git history).
 - **Series posts:** `blog/posts/NN-short-slug.md` with `series: marfago-labs-origin` and `order: N` matching the prefix.
 - **Standalone posts:** `blog/posts/short-slug.md` (no numeric prefix), omit `series`, use `order: 9001+`.
 - **Front matter:** `title`, `slug`, `series`, `order`, `date`, `description` on each post under `blog/posts/`.

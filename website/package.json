@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "sync-blog": "node scripts/sync-blog.mjs",
+    "backfill-freshness": "node scripts/backfill-content-freshness.mjs",
     "dev": "npm run sync-blog && astro dev",
     "dev:lan": "npm run sync-blog && astro dev --host",
     "build": "npm run sync-blog && astro build",

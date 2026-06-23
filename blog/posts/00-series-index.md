@@ -4,8 +4,8 @@ slug: series-index
 series: marfago-labs-origin
 order: 0
 date: 2026-06-08
-lastUpdated: 2026-06-22
-version: "1.5"
+lastUpdated: 2026-06-23
+version: "1.6"
 description: How a personal tech news recommender forced me to build an open-source evaluation lab, and what it taught me about building with AI under engineering discipline.
 cover: /blog/covers/series-index.png
 coverAlt: A branching teal path through layered lab instruments — an evaluation stack built one experiment at a time.

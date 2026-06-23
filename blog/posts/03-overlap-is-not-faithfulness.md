@@ -4,8 +4,8 @@ slug: overlap-is-not-faithfulness
 series: marfago-labs-origin
 order: 3
 date: 2026-06-08
-lastUpdated: 2026-06-21
-version: "1.9"
+lastUpdated: 2026-06-23
+version: "1.10"
 description: Why semantic similarity metrics give you false confidence, and how I built a multi-metric faithfulness scorecard.
 cover: /blog/covers/overlap-is-not-faithfulness.png
 coverAlt: Two overlapping teal circles beside a scorecard — overlap is not the same as faithfulness.

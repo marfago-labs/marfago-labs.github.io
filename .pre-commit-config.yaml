@@ -31,3 +31,9 @@ repos:
         language: system
         pass_filenames: false
         files: ^website/
+
+      - id: bump-content-freshness
+        name: bump lastUpdated when content changes
+        entry: node website/scripts/bump-content-freshness.mjs
+        language: node
+        files: ^(blog/posts/.+\.md|website/src/pages/(index|about)\.astro|website/src/pages/blog/index\.astro|website/src/pages/projects/(index|ner)\.astro)$

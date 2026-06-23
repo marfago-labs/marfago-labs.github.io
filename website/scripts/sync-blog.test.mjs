@@ -58,6 +58,33 @@ describe("syncBlog", () => {
     ).toBe(0);
   });
 
+  it("warns when blog source is missing and not quiet", async () => {
+    const { syncBlog } = await import(syncBlogModule);
+    const dir = mkdtempSync(path.join(tmpdir(), "sync-blog-warn-"));
+    const missingSrc = path.join(dir, "missing-posts");
+    const warnings = [];
+    const original = console.warn;
+    console.warn = (...args) => warnings.push(args.join(" "));
+
+    try {
+      syncBlog({
+        quiet: false,
+        roots: {
+          srcDir: missingSrc,
+          destDir: path.join(dir, "out"),
+          coversSrc: path.join(dir, "no-covers"),
+          coversDest: path.join(dir, "out-covers"),
+          diagramsSrc: path.join(dir, "no-diagrams"),
+          diagramsDest: path.join(dir, "out-diagrams"),
+        },
+      });
+    } finally {
+      console.warn = original;
+    }
+
+    expect(warnings.some((line) => line.includes("source missing"))).toBe(true);
+  });
+
   it("syncs posts into a temp destination and strips slug", async () => {
     const { syncBlog } = await import(syncBlogModule);
     const dir = mkdtempSync(path.join(tmpdir(), "sync-blog-temp-"));
@@ -148,6 +175,41 @@ Body
 
     expect(() => readFileSync(path.join(destDir, "stale.md"), "utf8")).toThrow();
     expect(readFileSync(path.join(destDir, "keep.md"), "utf8")).toBe("# Keep\n");
+  });
+
+  it("syncs cover assets when present", async () => {
+    const { syncBlog } = await import(syncBlogModule);
+    const dir = mkdtempSync(path.join(tmpdir(), "sync-blog-covers-"));
+    const srcDir = path.join(dir, "posts");
+    const destDir = path.join(dir, "content");
+    const coversSrc = path.join(dir, "covers");
+    const coversDest = path.join(dir, "out-covers");
+    mkdirSync(srcDir, { recursive: true });
+    mkdirSync(coversSrc, { recursive: true });
+    writeFileSync(path.join(srcDir, "post.md"), "# Post\n");
+    writeFileSync(path.join(coversSrc, "hero.png"), "png");
+    const logs = [];
+    const original = console.log;
+    console.log = (...args) => logs.push(args.join(" "));
+
+    try {
+      syncBlog({
+        quiet: false,
+        roots: {
+          srcDir,
+          destDir,
+          coversSrc,
+          coversDest,
+          diagramsSrc: path.join(dir, "no-diagrams"),
+          diagramsDest: path.join(dir, "out-diagrams"),
+        },
+      });
+    } finally {
+      console.log = original;
+    }
+
+    expect(readFileSync(path.join(coversDest, "hero.png"), "utf8")).toBe("png");
+    expect(logs.some((line) => line.includes("synced 1 covers"))).toBe(true);
   });
 
   it("syncs diagram assets and clears astro cache when requested", async () => {

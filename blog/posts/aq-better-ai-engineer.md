@@ -3,8 +3,8 @@ title: "Agent Quality Engineering: Grade the Protocol, Not the Chat"
 slug: aq-better-ai-engineer
 order: 9001
 date: 2026-06-19
-lastUpdated: 2026-06-22
-version: "1.6"
+lastUpdated: 2026-06-23
+version: "1.7"
 description: Agent quality (AQ) is not prompt quality. How I grade multi-turn agent behavior with server-owned state, scenario contracts, and parity checks — not chat prose alone.
 cover: /blog/covers/aq-better-ai-engineer.png
 coverAlt: Chat prose on the left, server-owned progress checklist on the right — Python and TypeScript paths meeting at a parity checkpoint.
