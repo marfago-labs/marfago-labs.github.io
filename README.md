@@ -85,7 +85,9 @@ The code is evidence. This page is the argument.
 
 **Site:** `website/` — local preview with `cd website && npm run dev` → http://localhost:4321. Publish via [`SETUP-PAGES.md`](SETUP-PAGES.md) to [marfago-labs.github.io](https://marfago-labs.github.io).
 
-**Visibility:** [ner-gold-generator](https://github.com/marfago-labs/ner-gold-generator) and [ner-dataset](https://github.com/marfago-labs/ner-dataset) ([stats](https://marfago-labs.github.io/ner-dataset/)) are public. [ner-detector](https://github.com/marfago-labs/ner-detector) ([benchmark](https://marfago-labs.github.io/ner-detector/)) is public. The rest of the lab is work in progress.
+**Public:** [ner-gold-generator](https://github.com/marfago-labs/ner-gold-generator), [ner-dataset](https://github.com/marfago-labs/ner-dataset) ([stats](https://marfago-labs.github.io/ner-dataset/)), [ner-detector](https://github.com/marfago-labs/ner-detector) ([benchmark](https://marfago-labs.github.io/ner-detector/)).
+
+**Work in progress:** ArticleRecommender and text-compressor — central to the blog series, not open for public review yet.
 
 ---
 

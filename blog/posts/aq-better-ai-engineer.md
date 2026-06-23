@@ -1,16 +1,18 @@
 ---
-title: "To Be a Better AI Engineer, Become an AQ Engineer"
+title: "Agent Quality Engineering: Grade the Protocol, Not the Chat"
 slug: aq-better-ai-engineer
 order: 9001
 date: 2026-06-19
-lastUpdated: 2026-06-19
-version: "1.5"
-description: Agent quality is not prompt quality. How I grade multi-turn agent behavior with server-owned state, scenario contracts, and parity checks — not chat prose alone.
+lastUpdated: 2026-06-22
+version: "1.6"
+description: Agent quality (AQ) is not prompt quality. How I grade multi-turn agent behavior with server-owned state, scenario contracts, and parity checks — not chat prose alone.
 cover: /blog/covers/aq-better-ai-engineer.png
 coverAlt: Chat prose on the left, server-owned progress checklist on the right — Python and TypeScript paths meeting at a parity checkpoint.
 ---
 
-# To Be a Better AI Engineer, Become an AQ Engineer
+# Agent Quality Engineering: Grade the Protocol, Not the Chat
+
+*To be a better AI engineer on agentic systems, grade AQ — not chat polish alone.*
 
 The demo looked fine. The assistant asked sensible follow-up questions, acknowledged what the user said, and moved the conversation forward. I ran the same user script twice and got two different clarify counts on the same questionnaire item. Nothing threw an exception. The UI showed green checks. The progress object underneath did not agree with itself.
 

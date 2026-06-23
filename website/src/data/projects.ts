@@ -11,7 +11,7 @@ export interface Project {
   stack?: string[];
 }
 
-/** GitHub Pages URLs for repo CI dashboards — reachable when the repo is public. */
+/** GitHub Pages URLs for repo CI dashboards (live). */
 export const repoPages = {
   nerDataset: "https://marfago-labs.github.io/ner-dataset/",
   nerDetector: "https://marfago-labs.github.io/ner-detector/",
@@ -29,12 +29,12 @@ export const projects: Project[] = [
     stack: ["ner-gold-generator", "ner-dataset", "ner-detector"],
     evidence: [
       {
-        label: "ner-dataset repo",
-        href: "https://github.com/marfago-labs/ner-dataset",
+        label: "Dataset stats dashboard",
+        href: repoPages.nerDataset,
       },
       {
-        label: "ner-detector repo",
-        href: "https://github.com/marfago-labs/ner-detector",
+        label: "Benchmark report",
+        href: repoPages.nerDetector,
       },
     ],
   },
@@ -42,18 +42,16 @@ export const projects: Project[] = [
     id: "article-recommender",
     name: "ArticleRecommender",
     tagline:
-      "Personal intelligence platform — ingest tech signal, investigate entities, synthesize briefings.",
+      "Personal intelligence platform — ingest tech signal, investigate entities, synthesize briefings. WIP: no public repo or CI evidence yet.",
     status: "wip",
-    repo: "https://github.com/marfago-labs/ArticleRecommender",
     stack: ["FastAPI", "React", "Agno", "Postgres"],
   },
   {
     id: "text-compressor",
     name: "text-compressor",
     tagline:
-      "Compress long transcripts before embedding; multi-metric faithfulness scorecard.",
+      "Compress long transcripts before embedding; multi-metric faithfulness scorecard. WIP: not open for public review yet.",
     status: "wip",
-    repo: "https://github.com/marfago-labs/text-compressor",
   },
   {
     id: "ner-gold-generator",
@@ -61,6 +59,12 @@ export const projects: Project[] = [
     tagline: "Entity-first gold generation with deterministic span anchoring.",
     status: "public",
     repo: "https://github.com/marfago-labs/ner-gold-generator",
+    evidence: [
+      {
+        label: "Repo",
+        href: "https://github.com/marfago-labs/ner-gold-generator",
+      },
+    ],
   },
   {
     id: "ner-dataset",
@@ -72,6 +76,10 @@ export const projects: Project[] = [
       {
         label: "Repo",
         href: "https://github.com/marfago-labs/ner-dataset",
+      },
+      {
+        label: "Live stats dashboard",
+        href: repoPages.nerDataset,
       },
     ],
   },
@@ -87,23 +95,33 @@ export const projects: Project[] = [
         label: "Repo",
         href: "https://github.com/marfago-labs/ner-detector",
       },
+      {
+        label: "Live benchmark report",
+        href: repoPages.nerDetector,
+      },
     ],
   },
 ];
 
 export const evidenceLinks = [
   {
+    title: "Dataset stats dashboard",
+    href: repoPages.nerDataset,
+    source: "ner-dataset CI → GitHub Pages",
+    question:
+      "Live integrity metrics on gold JSONL — validators run on every PR.",
+  },
+  {
+    title: "NER benchmark report",
+    href: repoPages.nerDetector,
+    source: "ner-detector CI → GitHub Pages",
+    question: "Doc F1 and latency across backends on shared gold.",
+  },
+  {
     title: "NER evaluation pipeline",
     href: "/projects/ner/",
     source: "ner-gold-generator → ner-dataset → ner-detector",
     question:
-      "How gold is generated, validated, and benchmarked — repos and CI dashboards when public.",
-  },
-  {
-    title: "Dataset & benchmark repos",
-    href: "https://github.com/marfago-labs/ner-dataset",
-    source: "GitHub",
-    question:
-      "Source JSONL, CI validators, and Pages reports on marfago-labs.github.io when repos are public.",
+      "How gold is generated, validated, and benchmarked — all three repos are public.",
   },
 ];
