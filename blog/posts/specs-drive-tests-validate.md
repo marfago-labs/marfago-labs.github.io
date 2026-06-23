@@ -3,8 +3,8 @@ title: "Specs Drive. Tests Validate."
 slug: specs-drive-tests-validate
 order: 9002
 date: 2026-06-19
-lastUpdated: 2026-06-21
-version: "1.8"
+lastUpdated: 2026-06-23
+version: "1.9"
 description: How I build agent-written software I can trust — user stories and SDD as the driver, unit/integration/E2E as the validator, lifecycle matrices for multi-role journeys, AQ for agents.
 cover: /blog/covers/specs-drive-tests-validate.png
 coverAlt: A specification document with R1 and R2 flows through a guarded arrow into a three-tier test pyramid with checkmarks — specs drive, tests validate.
@@ -73,10 +73,10 @@ Order-of-magnitude numbers from the stack as it exists today — not to impress,
 
 | Layer | Rough scale | Role |
 |-------|-------------|------|
-| Unit / component (`*.test.ts`, `*.test.tsx`) | **Hundreds of files** | Progress FSM, RBAC, validation, UI states, wizard steps |
-| Python unit / benchmark (`test_*.py`) | **Dozens of files**, **600+** cases | Agent runtime, structured progress, scenario validators |
-| Playwright E2E (`*.spec.ts`) | **Dozens of specs** | Stub journeys in CI; integration against real auth + deployed API |
-| Agent scenarios (YAML) | **15+** gated paths | Clarify, cap, digression, parity — see AQ post |
+| Unit / component (`*.test.ts`, `*.test.tsx`) | **About a hundred files** | Progress FSM, RBAC, validation, UI states, wizard steps |
+| Python unit / benchmark (`test_*.py`) | **About a hundred files**, **hundreds of cases** | Agent runtime, structured progress, scenario validators |
+| Playwright E2E (`*.spec.ts`) | **A dozen-plus specs** | Stub journeys in CI; integration against real auth + deployed API |
+| Agent scenarios (YAML) | **About fifteen** gated paths | Clarify, cap, digression, parity — see AQ post |
 
 CI runs static checks, workspace unit tests, stub E2E, and coverage gates (**≥95%** lines/statements/functions on the packages that own behavior). Live LLM benchmarks and full integration E2E are opt-in locally or in separate workflows — same distinction as stub vs live in the evaluation lab.
 
@@ -180,7 +180,7 @@ Specs drive. Tests validate. Agents draft. I still sign.
 ## Takeaways
 
 - **SDD is the driver** — Numbered requirements and acceptance criteria (status codes, error ids, immutability) are the contract agents implement against, not a slide deck.
-- **QA is the validator** — Hundreds of unit tests and dozens of E2E specs enforce that contract; CI coverage gates make "agent wrote it" insufficient without proof.
+- **QA is the validator** — On the order of 100+ automated tests and a dozen-plus E2E specs enforce that contract; CI coverage gates make "agent wrote it" insufficient without proof.
 - **AQ stacks on QA** — Multi-turn agent protocol needs scenario contracts and server-owned progress; it does not replace browser journeys or API auth tests.
 - **Lifecycle matrix for multi-role E2E** — Stable ids, stub vs integration columns, and `[MATRIX:id]` titles so cross-portal book/move/cancel stays traceable; AQ scenarios for agents, matrix rows for shared UI state.
 - **Honest traceability** — Partial vs done in requirement tables; tech debt when experiment FSM runs ahead of production — tests prevent silent drift.
