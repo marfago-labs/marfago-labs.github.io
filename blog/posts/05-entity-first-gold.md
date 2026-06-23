@@ -4,8 +4,8 @@ slug: entity-first-gold
 series: marfago-labs-origin
 order: 5
 date: 2026-06-08
-lastUpdated: 2026-06-21
-version: "1.4"
+lastUpdated: 2026-06-22
+version: "1.5"
 description: LLMs can't count. How I solved character offset hallucinations using entity-first generation in ner-gold-generator.
 cover: /blog/covers/entity-first-gold.png
 coverAlt: Named entities anchored to character spans on a teal text strip — entity first, offsets second.

@@ -37,6 +37,10 @@ describe("isStandalonePost", () => {
   it("treats in-series posts as not standalone", () => {
     expect(isStandalonePost("marfago-labs-origin", 3)).toBe(false);
   });
+
+  it("treats series posts without order as in-series", () => {
+    expect(isStandalonePost("marfago-labs-origin", undefined)).toBe(false);
+  });
 });
 
 describe("partitionBlogPosts", () => {
@@ -91,6 +95,7 @@ describe("getActLabel", () => {
   it("maps order bands to acts", () => {
     expect(getActLabel(1, "marfago-labs-origin")).toBe("Act I: The Illusion");
     expect(getActLabel(3, "marfago-labs-origin")).toBe("Act II: The Reality Check");
+    expect(getActLabel(5, "marfago-labs-origin")).toBe("Act III: The Infrastructure");
     expect(getActLabel(7, "marfago-labs-origin")).toBe("Act IV: The Philosophy");
   });
 });

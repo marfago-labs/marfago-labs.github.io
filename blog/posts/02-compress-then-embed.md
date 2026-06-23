@@ -4,8 +4,8 @@ slug: compress-then-embed
 series: marfago-labs-origin
 order: 2
 date: 2026-06-08
-lastUpdated: 2026-06-21
-version: "1.7"
+lastUpdated: 2026-06-22
+version: "1.8"
 description: The text-compressor experiment — embedder context limits, compress-then-embed, and the operational reality of API churn.
 cover: /blog/covers/compress-then-embed.png
 coverAlt: A long transcript ribbon narrowing into a dense teal block before a vector grid — compress, then embed.

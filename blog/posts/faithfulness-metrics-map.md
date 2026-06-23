@@ -4,7 +4,7 @@ slug: faithfulness-metrics-map
 order: 9003
 date: 2026-06-21
 lastUpdated: 2026-06-23
-version: "1.1"
+version: "1.2"
 description: A plain-language guide to four compression checks — does it sound similar, keep names, keep numbers, and stay true sentence by sentence — and why one high score is not enough.
 cover: /blog/covers/faithfulness-metrics-map.png
 coverAlt: Four simple checks pointing at one summary — sounding right is not the same as keeping what mattered.

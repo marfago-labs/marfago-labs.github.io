@@ -4,8 +4,8 @@ slug: agents-draft-i-sign
 series: marfago-labs-origin
 order: 7
 date: 2026-06-09
-lastUpdated: 2026-06-21
-version: "1.4"
+lastUpdated: 2026-06-22
+version: "1.5"
 description: The agent walk, the control loop, and the sign — how I explore with agents first, then constrain output with tests, benchmarks, and public evidence.
 cover: /blog/covers/agents-draft-i-sign.png
 coverAlt: A winding teal path through a stylized city map — the agent walk before the build.

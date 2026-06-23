@@ -4,8 +4,8 @@ slug: i-didnt-want-another-bookmark-app
 series: marfago-labs-origin
 order: 1
 date: 2026-06-08
-lastUpdated: 2026-06-21
-version: "1.6"
+lastUpdated: 2026-06-23
+version: "1.7"
 description: "Why ArticleRecommender exists, what Phase 1 actually shipped, and why I deliberately stopped before building the smart enrichment."
 cover: /blog/covers/i-didnt-want-another-bookmark-app.png
 coverAlt: A tight teal loop through document, storage, and search — the minimum credible path before the larger pipeline.

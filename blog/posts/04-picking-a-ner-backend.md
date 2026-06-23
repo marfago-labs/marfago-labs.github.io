@@ -4,8 +4,8 @@ slug: picking-a-ner-backend
 series: marfago-labs-origin
 order: 4
 date: 2026-06-08
-lastUpdated: 2026-06-21
-version: "1.4"
+lastUpdated: 2026-06-22
+version: "1.5"
 description: Comparing LLMs, BERT, and GLiNER in ner-detector. Why I chose Doc F1, and the latency bug that almost ruined the benchmark.
 cover: /blog/covers/picking-a-ner-backend.png
 coverAlt: Three teal backend stacks on a benchmark grid with latency and F1 markers — picking a NER backend with evidence.

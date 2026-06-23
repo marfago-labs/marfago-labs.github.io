@@ -30,6 +30,10 @@ npm run check    # Astro / TypeScript
 npm test         # Vitest with ≥95% coverage on src/lib + blog scripts
 ```
 
+On commit, pre-commit runs `website/scripts/bump-content-freshness.mjs` for `blog/posts/*.md` and mapped site pages only. It bumps `lastUpdated` and patch `version` when **that file's** substantive content changes (compared to `HEAD`). Editing unrelated code or other pages does not touch dates. `date` (first publish) is never auto-changed.
+
+After bulk edits committed before the hook existed, run `npm run backfill-freshness` once to align `lastUpdated` with each file's last substantive git change.
+
 Coverage is scoped to testable units (`src/lib/`, `scripts/sync-blog.mjs`, `scripts/remark-inline-diagrams.mjs`), not Astro pages.
 
 ## Publish
