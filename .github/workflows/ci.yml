@@ -39,6 +39,10 @@ jobs:
         working-directory: website
         run: npm test
 
+      - name: Mutation tests (Stryker 100% on src/lib)
+        working-directory: website
+        run: npm run test:mutation
+
       - name: Build
         working-directory: website
         run: npm run build

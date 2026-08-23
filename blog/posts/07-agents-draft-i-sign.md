@@ -162,7 +162,7 @@ Do not automate judgment away. Walk until the map is clear. Then automate the wo
 - **Agents as execution layer** — Agents draft and implement; the engineer decides what deserves trust and owns the signature at the bottom.
 - **The map is the deliverable** — I did not set out to build an evaluation lab; the walk revealed compression, NER, gold, and evidence as the real prerequisites.
 
-**Previous:** [Publishing the Evidence](./06-publish-the-evidence-loop.md) · **Series index:** [Building an Evaluation Lab by Accident](./00-series-index.md)
+**Previous:** [Publishing the Evidence](./06-publish-the-evidence-loop.md) · **Next:** [Mockups Are Specs, Not Screenshots](./08-mockups-are-specs-not-screenshots.md) · **Series index:** [Building an Evaluation Lab by Accident](./00-series-index.md)
 
 ## The Evidence
 

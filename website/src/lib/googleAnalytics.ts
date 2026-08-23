@@ -7,8 +7,7 @@ export function shouldEnableGoogleAnalytics(
   isProd: boolean,
   measurementId: string,
 ): boolean {
-  const id = measurementId.trim();
-  return isProd && id.length > 0 && isValidGaMeasurementId(id);
+  return isProd && isValidGaMeasurementId(measurementId);
 }
 
 export function gtagScriptSrc(measurementId: string): string {

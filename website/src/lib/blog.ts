@@ -45,7 +45,8 @@ export function getActLabel(order: number, series?: string): string {
   if (order <= 2) return "Act I: The Illusion";
   if (order <= 4) return "Act II: The Reality Check";
   if (order <= 6) return "Act III: The Infrastructure";
-  return "Act IV: The Philosophy";
+  if (order <= 7) return "Act IV: The Philosophy";
+  return "Act V: Back to the Product";
 }
 
 export function getPostMetaLabel(order: number, series?: string): string {

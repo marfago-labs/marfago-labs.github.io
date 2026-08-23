@@ -92,4 +92,4 @@ Overlap-style metrics ([BERTScore](https://arxiv.org/abs/1904.09675), embedding 
 
 - **Compare run:** `text-compressor/results/compare-20260524T225903Z/models/openai--gpt-oss-120b-free/metrics.json`
 - **Eval config:** `text-compressor/config/eval_metrics.yaml`
-- **Repo:** [marfago-labs/text-compressor](https://github.com/marfago-labs/text-compressor) (WIP — not open for public review yet)
+- **Repo:** [marfago-labs/text-compressor](https://github.com/marfago-labs/text-compressor)

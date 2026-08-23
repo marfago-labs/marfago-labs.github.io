@@ -3,8 +3,8 @@ title: "Specs Drive. Tests Validate."
 slug: specs-drive-tests-validate
 order: 9002
 date: 2026-06-19
-lastUpdated: 2026-06-23
-version: "1.9"
+lastUpdated: 2026-06-22
+version: "1.10"
 description: How I build agent-written software I can trust — user stories and SDD as the driver, unit/integration/E2E as the validator, lifecycle matrices for multi-role journeys, AQ for agents.
 cover: /blog/covers/specs-drive-tests-validate.png
 coverAlt: A specification document with R1 and R2 flows through a guarded arrow into a three-tier test pyramid with checkmarks — specs drive, tests validate.
@@ -38,7 +38,7 @@ Specs without tests are marketing. Tests without specs are archaeology. Agents w
 
 ## What the spec actually contains
 
-On the application I am building, I keep specs under `docs/specs/` — not as decoration, but as the artifact agents read before they touch code. A typical SDD slice looks like this:
+On the application I am building, I keep specs under `docs/specs/` — not as decoration, but as the artifact agents read before they touch code. UX surfaces get the same treatment: [`feed-and-home-ux.md`](https://github.com/marfago-labs/ArticleRecommender/blob/master/docs/specs/feed-and-home-ux.md) maps static HTML mockup regions to numbered requirements and acceptance checkboxes for the feed-first home. A typical SDD slice looks like this:
 
 - **Functional requirements** numbered R1, R2, … (eligibility, create, mutate, finalize).
 - **Acceptance** under each requirement — often concrete HTTP status, error code strings, immutability rules ("finalized resource rejects PATCH").

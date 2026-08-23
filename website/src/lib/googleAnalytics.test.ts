@@ -8,18 +8,24 @@ import {
 describe("isValidGaMeasurementId", () => {
   it("accepts standard GA4 ids", () => {
     expect(isValidGaMeasurementId("G-SXH9QJQQQL")).toBe(true);
+    expect(isValidGaMeasurementId("  G-SXH9QJQQQL  ")).toBe(true);
   });
 
   it("rejects empty and malformed ids", () => {
     expect(isValidGaMeasurementId("")).toBe(false);
     expect(isValidGaMeasurementId("UA-123456-1")).toBe(false);
     expect(isValidGaMeasurementId("G-")).toBe(false);
+    // Kill missing ^ / $ anchors on the GA4 pattern.
+    expect(isValidGaMeasurementId("xG-SXH9QJQQQL")).toBe(false);
+    expect(isValidGaMeasurementId("G-SXH9QJQQQL!")).toBe(false);
+    expect(isValidGaMeasurementId("G-SXH9QJQQQL-1")).toBe(false);
   });
 });
 
 describe("shouldEnableGoogleAnalytics", () => {
   it("enables in production with a valid id", () => {
     expect(shouldEnableGoogleAnalytics(true, "G-SXH9QJQQQL")).toBe(true);
+    expect(shouldEnableGoogleAnalytics(true, "  G-SXH9QJQQQL  ")).toBe(true);
   });
 
   it("disables in development", () => {
@@ -36,6 +42,9 @@ describe("shouldEnableGoogleAnalytics", () => {
 describe("gtagScriptSrc", () => {
   it("builds the gtag loader url", () => {
     expect(gtagScriptSrc("G-SXH9QJQQQL")).toBe(
+      "https://www.googletagmanager.com/gtag/js?id=G-SXH9QJQQQL",
+    );
+    expect(gtagScriptSrc("  G-SXH9QJQQQL  ")).toBe(
       "https://www.googletagmanager.com/gtag/js?id=G-SXH9QJQQQL",
     );
   });

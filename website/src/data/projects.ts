@@ -50,8 +50,16 @@ export const projects: Project[] = [
     id: "text-compressor",
     name: "text-compressor",
     tagline:
-      "Compress long transcripts before embedding; multi-metric faithfulness scorecard. WIP: not open for public review yet.",
-    status: "wip",
+      "Compress long transcripts before embedding; multi-metric faithfulness scorecard for compress-then-embed.",
+    status: "public",
+    repo: "https://github.com/marfago-labs/text-compressor",
+    stack: ["OpenRouter", "ModernBERT", "ner-detector", "Agno"],
+    evidence: [
+      {
+        label: "Repo",
+        href: "https://github.com/marfago-labs/text-compressor",
+      },
+    ],
   },
   {
     id: "ner-gold-generator",

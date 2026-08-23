@@ -2,7 +2,7 @@
 
 Stories about problems, tradeoffs, measured outcomes, and the discipline required to build with AI without surrendering engineering judgment.
 
-**Series:** [Building an Evaluation Lab by Accident](./posts/00-series-index.md) — I wanted a tech briefing app. I ended up building open-source tools to measure whether the AI parts actually work. Four acts: the product, the metric traps, the infrastructure, and the operating model.
+**Series:** [Building an Evaluation Lab by Accident](./posts/00-series-index.md) — I wanted a tech briefing app. I ended up building open-source tools to measure whether the AI parts actually work. Five acts: the product, the metric traps, the infrastructure, the operating model, and the return to ArticleRecommender.
 
 Writing standards: [`.cursor/rules/docs-blog-writing.mdc`](../.cursor/rules/docs-blog-writing.mdc) — includes **External style references (Chip Huyen — adopt, don’t copy)** for production-minded tone without copying her format.
 
@@ -18,8 +18,9 @@ Writing standards: [`.cursor/rules/docs-blog-writing.mdc`](../.cursor/rules/docs
 | 5 | [Fixing LLM Offset Hallucinations](./posts/05-entity-first-gold.md) | III | ner-gold-generator |
 | 6 | [Publishing the Evidence](./posts/06-publish-the-evidence-loop.md) | III | ner-dataset + evidence loop |
 | 7 | [Agents Draft. I Sign.](./posts/07-agents-draft-i-sign.md) | IV | Agent walk, control loop, and sign |
+| 8 | [Mockups Are Specs, Not Screenshots](./posts/08-mockups-are-specs-not-screenshots.md) | V | HTML mockups → feed-first SDD → partial FeedPage |
 
-**Reserved:** `08+` filenames and `order` values are for future in-series chapters (e.g. ArticleRecommender return). Standalone essays do not use the `NN-` prefix.
+**Reserved:** `09+` filenames and `order` values are for future in-series chapters. Standalone essays do not use the `NN-` prefix.
 
 ### Standalone
 
@@ -45,6 +46,6 @@ Writing standards: [`.cursor/rules/docs-blog-writing.mdc`](../.cursor/rules/docs
 - [ner-gold-generator](https://github.com/marfago-labs/ner-gold-generator) · [ner-dataset](https://github.com/marfago-labs/ner-dataset) · [ner-detector](https://github.com/marfago-labs/ner-detector) — all public
 - [marfago-labs org hub](https://marfago-labs.github.io)
 
-**Work in progress (no public evidence yet):** ArticleRecommender, text-compressor — named in the series; repos not open for review.
+**Work in progress (no public evidence yet):** [ArticleRecommender](https://github.com/marfago-labs/ArticleRecommender) — named in the series; repo not open for review.
 
 **Site:** `website/` (Astro) — `npm run dev` in `website/` previews locally; deploys to [marfago-labs.github.io](https://marfago-labs.github.io) via GitHub Actions. These markdown files remain the source of truth.

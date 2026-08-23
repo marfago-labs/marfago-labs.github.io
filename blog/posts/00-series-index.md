@@ -55,19 +55,27 @@ Benchmarks need gold data. The way I was generating gold data was broken.
 
 ## Act IV — How I actually work with agents
 
-The technical path above is what I built. This last chapter is *how* I built it.
+The technical path above is what I built. This chapter is *how* I built it.
 
 **[Agents Draft. I Sign.](./07-agents-draft-i-sign.md)** — Explore the problem with agents first (the walk), constrain output with tests and benchmarks second (the loop), and take personal accountability for what ships (the sign).
 
 ---
 
+## Act V — Back to the product
+
+After the evaluation lab, I returned to ArticleRecommender — and discovered the UI mockups were not the hard part. Making them **durable** was.
+
+**[Mockups Are Specs, Not Screenshots](./08-mockups-are-specs-not-screenshots.md)** — Search-first HTML looked right until the product correction: daily feed, not omnibox. Static mockups became numbered SDD with acceptance checkboxes; Playwright validates what shipped.
+
+---
+
 ## Who this is for
 
-If you build with AI and are tired of vibes-based evaluation, these posts show how I put numbers behind architectural choices. If you use agents to write software, the final chapter describes the operating model: walk until the map is clear, then automate the work around judgment — not the judgment itself.
+If you build with AI and are tired of vibes-based evaluation, these posts show how I put numbers behind architectural choices. If you use agents to write software, Act IV describes the operating model: walk until the map is clear, then automate the work around judgment — not the judgment itself. Act V shows that model applied to product UX.
 
 Start with [Chapter 1](./01-i-didnt-want-another-bookmark-app.md), or jump to whichever act matches where you are stuck.
 
-Future in-series chapters will use **`08+`** filenames and `order` values (e.g. returning to ArticleRecommender). Standalone essays use slug-only filenames and do not consume those numbers.
+Future in-series chapters will use **`09+`** filenames and `order` values. Standalone essays use slug-only filenames and do not consume those numbers.
 
 ---
 

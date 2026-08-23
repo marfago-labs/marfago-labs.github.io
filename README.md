@@ -18,7 +18,7 @@ The shift I care about: **natural language is the new interface to the system** 
 
 - **Hard problem solved:** avoid LLM offset hallucinations with entity-first planning and deterministic span anchoring.
 - **Quality controls:** strict validation (exact and unique spans), multi-pass consensus labeling, and integrity metrics per dataset.
-- **Engineering bar:** coverage gate (95%+), typed Python, pre-commit checks, Gitleaks secret scanning in CI, and CI workflows on every repo.
+- **Engineering bar:** coverage gate (95%+), typed Python, pre-commit checks, Gitleaks secret scanning in CI, mutation gates where applicable (mutmut / Stryker 100% kill on scoped core), and CI workflows on every repo.
 - **Evidence:** live dataset quality dashboard at [marfago-labs.github.io/ner-dataset](https://marfago-labs.github.io/ner-dataset/).
 
 ---
@@ -83,11 +83,11 @@ Over a career, not a sprint.
 
 The code is evidence. This page is the argument.
 
-**Site:** `website/` — local preview with `cd website && npm run dev` → http://localhost:4321. Publish via [`SETUP-PAGES.md`](SETUP-PAGES.md) to [marfago-labs.github.io](https://marfago-labs.github.io).
+**Site:** `website/` — local preview with `cd website && npm run dev` → http://localhost:4321. Publish via [`SETUP-PAGES.md`](SETUP-PAGES.md) to [marfago-labs.github.io](https://marfago-labs.github.io). Unit + mutation tests: `npm test` / `npm run test:mutation` (see [website/docs/testing-mutation.md](website/docs/testing-mutation.md)).
 
-**Public:** [ner-gold-generator](https://github.com/marfago-labs/ner-gold-generator), [ner-dataset](https://github.com/marfago-labs/ner-dataset) ([stats](https://marfago-labs.github.io/ner-dataset/)), [ner-detector](https://github.com/marfago-labs/ner-detector) ([benchmark](https://marfago-labs.github.io/ner-detector/)).
+**Public:** [text-compressor](https://github.com/marfago-labs/text-compressor), [ner-gold-generator](https://github.com/marfago-labs/ner-gold-generator), [ner-dataset](https://github.com/marfago-labs/ner-dataset) ([stats](https://marfago-labs.github.io/ner-dataset/)), [ner-detector](https://github.com/marfago-labs/ner-detector) ([benchmark](https://marfago-labs.github.io/ner-detector/)).
 
-**Work in progress:** ArticleRecommender and text-compressor — central to the blog series, not open for public review yet.
+**Work in progress:** [ArticleRecommender](https://github.com/marfago-labs/ArticleRecommender) — central to the blog series, not open for public review yet.
 
 ---
 

@@ -97,6 +97,8 @@ describe("getActLabel", () => {
     expect(getActLabel(3, "marfago-labs-origin")).toBe("Act II: The Reality Check");
     expect(getActLabel(5, "marfago-labs-origin")).toBe("Act III: The Infrastructure");
     expect(getActLabel(7, "marfago-labs-origin")).toBe("Act IV: The Philosophy");
+    expect(getActLabel(8, "marfago-labs-origin")).toBe("Act V: Back to the Product");
+    expect(getActLabel(9, "marfago-labs-origin")).toBe("Act V: Back to the Product");
   });
 });
 

@@ -15,6 +15,8 @@ org-profile/
 website/node_modules/
 website/dist/
 website/.astro/
+website/.stryker-tmp/
+website/reports/mutation/
 
 # Cursor local
 .cursor/
@@ -24,3 +26,4 @@ blog/_archive/
 
 # Local audit reports (may contain commit snippets)
 scripts/audit-reports/
+scripts/filter-repo-*.txt

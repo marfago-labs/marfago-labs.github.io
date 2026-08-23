@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import { formatPageDate, formatPageStamp } from "./pageMeta";
 
 describe("formatPageDate", () => {
-  it("formats dates in en-IE locale", () => {
-    expect(formatPageDate(new Date("2026-06-21T12:00:00Z"))).toMatch(/21.*2026/);
+  it("formats dates in en-IE locale with long month", () => {
+    const formatted = formatPageDate(new Date("2026-06-21T12:00:00Z"));
+    expect(formatted).toMatch(/21.*2026/);
+    expect(formatted).toContain("June");
   });
 });
 

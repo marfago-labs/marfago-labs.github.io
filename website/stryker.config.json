@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "packageManager": "npm",
+  "testRunner": "command",
+  "commandRunner": {
+    "command": "npx vitest run src/lib/googleAnalytics.test.ts src/lib/pageMeta.test.ts"
+  },
+  "coverageAnalysis": "off",
+  "mutate": [
+    "src/lib/googleAnalytics.ts",
+    "src/lib/pageMeta.ts"
+  ],
+  "thresholds": {
+    "high": 100,
+    "low": 100,
+    "break": 100
+  },
+  "concurrency": 2,
+  "reporters": ["clear-text", "progress", "html"],
+  "htmlReporter": {
+    "fileName": "reports/mutation/mutation.html"
+  },
+  "tempDirName": ".stryker-tmp",
+  "cleanTempDir": true,
+  "timeoutMS": 60000,
+  "timeoutFactor": 2
+}
