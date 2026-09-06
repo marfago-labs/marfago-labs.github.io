@@ -21,6 +21,8 @@ Do **not** flatten `website/` to repo root unless you also change `sync-blog.mjs
 3. **Settings → Pages → Build and deployment → Source:** **GitHub Actions**.
 4. Push to `master` or `main` (or run **Deploy org site (Pages)** manually).
 
+Search Console ownership uses an HTML meta tag in the site `<head>` (see `website/src/lib/googleSiteVerification.ts`). After a successful Pages deploy, click **Verify** in Google Search Console.
+
 After the first green run, the site URL appears under **Settings → Pages** and in the **github-pages** environment.
 
 ## Local check before push

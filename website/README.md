@@ -16,6 +16,8 @@ Open **http://localhost:4321**
 
 Analytics (production builds only): set `PUBLIC_GA_MEASUREMENT_ID` (see `.env.example`). CI passes this in [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml).
 
+Google Search Console: the HTML-tag verification meta is in `BaseLayout` (`src/lib/googleSiteVerification.ts`). After a Pages deploy, click **Verify** in Search Console.
+
 Production-like check:
 
 ```bash

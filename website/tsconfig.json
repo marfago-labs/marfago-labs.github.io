@@ -1,6 +1,12 @@
 {
   "extends": "astro/tsconfigs/strict",
-  "exclude": ["**/*.test.ts"],
+  "exclude": [
+    "**/*.test.ts",
+    "coverage",
+    "dist",
+    ".stryker-tmp",
+    "reports"
+  ],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

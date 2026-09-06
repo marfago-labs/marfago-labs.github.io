@@ -16,6 +16,8 @@ Guidance for the **marfago-labs** workspace (org hub + nested project repos).
 
 Use **`.env.example`** only as empty templates. Copy to `.env` locally; never push `.env`.
 
+Google Search Console HTML-tag tokens (`google-site-verification`) are public by design. The org-site token is allowlisted in [`.gitleaks.toml`](.gitleaks.toml) so secret scans do not treat it as an API key.
+
 ## Pre-commit and CI
 
 - **Gitleaks** runs in CI and via pre-commit on repos that configure it.

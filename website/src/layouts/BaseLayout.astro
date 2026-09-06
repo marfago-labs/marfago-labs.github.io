@@ -1,5 +1,6 @@
 ---
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
+import GoogleSiteVerification from "../components/GoogleSiteVerification.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import "../styles/global.css";
@@ -25,6 +26,7 @@ const fullTitle = title === "marfago labs" ? title : `${title} · marfago labs`;
     <meta name="author" content="Marco Fago" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{fullTitle}</title>
+    <GoogleSiteVerification />
     <GoogleAnalytics />
   </head>
   <body>

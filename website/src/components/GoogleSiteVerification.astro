@@ -1,0 +1,14 @@
+---
+import {
+  GOOGLE_SITE_VERIFICATION_TOKEN,
+  googleSiteVerificationContent,
+} from "../lib/googleSiteVerification";
+
+const content = googleSiteVerificationContent(GOOGLE_SITE_VERIFICATION_TOKEN);
+---
+
+{
+  content && (
+    <meta name="google-site-verification" content={content} />
+  )
+}

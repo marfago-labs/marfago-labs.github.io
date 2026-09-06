@@ -3,12 +3,13 @@
   "packageManager": "npm",
   "testRunner": "command",
   "commandRunner": {
-    "command": "npx vitest run src/lib/googleAnalytics.test.ts src/lib/pageMeta.test.ts"
+    "command": "npx vitest run src/lib/googleAnalytics.test.ts src/lib/pageMeta.test.ts src/lib/googleSiteVerification.test.ts"
   },
   "coverageAnalysis": "off",
   "mutate": [
     "src/lib/googleAnalytics.ts",
-    "src/lib/pageMeta.ts"
+    "src/lib/pageMeta.ts",
+    "src/lib/googleSiteVerification.ts"
   ],
   "thresholds": {
     "high": 100,

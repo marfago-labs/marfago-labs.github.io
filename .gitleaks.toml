@@ -7,8 +7,12 @@ title = "marfago-labs.github.io"
 useDefault = true
 
 [allowlist]
-description = "Docs and placeholders (not real secrets)"
+description = "Docs, placeholders, and public Search Console HTML-tag token"
 paths = [
   '''(?:^|/)\.env\.example$''',
   '''(?:^|/)docs/''',
+]
+regexes = [
+  # Public by design: Google Search Console HTML meta verification.
+  '''sJg7T8DTZ-L-b2r4jbEYMCuKVZ6_Cd311AdeAy-5qQ8''',
 ]
