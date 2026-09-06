@@ -35,5 +35,6 @@ repos:
       - id: bump-content-freshness
         name: bump lastUpdated when content changes
         entry: node website/scripts/bump-content-freshness.mjs
-        language: node
+        # pre-commit 4.6+ rejects local `language: node` without additional_dependencies.
+        language: system
         files: ^(blog/posts/.+\.md|website/src/pages/(index|about)\.astro|website/src/pages/blog/index\.astro|website/src/pages/projects/(index|ner)\.astro)$
