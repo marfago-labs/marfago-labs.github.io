@@ -13,6 +13,7 @@ Guidance for the **marfago-labs** workspace (org hub + nested project repos).
 | `backend/data/` | ArticleRecommender | Local runtime settings |
 | `website/coverage/` | marfago-labs (root) | Generated Vitest coverage HTML |
 | `blog/_archive/` | marfago-labs (root) | Internal dev notes — not for public publish |
+| `*.code-workspace` | marfago-labs (root) | Local Cursor/VS Code multi-root layout; each lab is its own workspace |
 
 Use **`.env.example`** only as empty templates. Copy to `.env` locally; never push `.env`.
 

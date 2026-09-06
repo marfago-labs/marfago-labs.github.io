@@ -20,6 +20,7 @@ website/reports/mutation/
 
 # Cursor local
 .cursor/
+*.code-workspace
 
 # Internal blog dev notes (never publish as-is)
 blog/_archive/
