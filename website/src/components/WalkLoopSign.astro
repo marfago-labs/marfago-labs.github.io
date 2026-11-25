@@ -1,13 +1,5 @@
 ---
-import { readFileSync } from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const svgPath = path.join(
-  fileURLToPath(new URL(".", import.meta.url)),
-  "../../public/blog/diagrams/walk-loop-sign.svg",
-);
-const markup = readFileSync(svgPath, "utf-8");
+import markup from "../../public/blog/diagrams/walk-loop-sign.svg?raw";
 
 interface Props {
   class?: string;

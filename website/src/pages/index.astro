@@ -11,7 +11,7 @@ const meta = sitePageMeta.home;
 
 const blogPosts = await getCollection("blog");
 const readingTimeBySlug = new Map(
-  blogPosts.map((post) => [postSlug(post.id), readingMinutes(post.body)]),
+  blogPosts.map((post) => [postSlug(post.id), readingMinutes(post.body ?? "")]),
 );
 
 function readingLabelForHref(href: string): string {
