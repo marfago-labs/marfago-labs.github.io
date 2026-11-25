@@ -110,26 +110,3 @@ export const projects: Project[] = [
     ],
   },
 ];
-
-export const evidenceLinks = [
-  {
-    title: "Dataset stats dashboard",
-    href: repoPages.nerDataset,
-    source: "ner-dataset CI → GitHub Pages",
-    question:
-      "Live integrity metrics on gold JSONL — validators run on every PR.",
-  },
-  {
-    title: "NER benchmark report",
-    href: repoPages.nerDetector,
-    source: "ner-detector CI → GitHub Pages",
-    question: "Doc F1 and latency across backends on shared gold.",
-  },
-  {
-    title: "NER evaluation pipeline",
-    href: "/projects/ner/",
-    source: "ner-gold-generator → ner-dataset → ner-detector",
-    question:
-      "How gold is generated, validated, and benchmarked — all three repos are public.",
-  },
-];
