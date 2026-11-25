@@ -1,430 +1,163 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PageMetaRow from "../components/PageMetaRow.astro";
 import { getCollection } from "astro:content";
-import { evidenceLinks } from "../data/projects";
-import { sitePageMeta } from "../data/site-pages";
 import { postSlug } from "../lib/blog";
-import { formatReadingTime, pageReadingLabel, readingMinutes } from "../lib/readingTime";
 
-const meta = sitePageMeta.home;
+const LATEST = 5;
 
-const blogPosts = await getCollection("blog");
-const readingTimeBySlug = new Map(
-  blogPosts.map((post) => [postSlug(post.id), readingMinutes(post.body ?? "")]),
-);
+const posts = (await getCollection("blog"))
+  .filter((post) => post.data.order !== 0)
+  .sort(
+    (a, b) =>
+      b.data.date.getTime() - a.data.date.getTime() ||
+      a.data.title.localeCompare(b.data.title),
+  )
+  .slice(0, LATEST);
 
-function readingLabelForHref(href: string): string {
-  const slug = href.replace(/^\/blog\/|\/$/g, "");
-  const minutes = readingTimeBySlug.get(slug);
-  return minutes ? formatReadingTime(minutes) : "";
-}
-
-function withReadingLabel(prefix: string, href: string): string {
-  const reading = readingLabelForHref(href);
-  return reading ? `${prefix} · ${reading}` : prefix;
-}
-
-const arcSteps = [
-  {
-    label: "Act I · The Illusion",
-    title: "The Minimum Credible Loop",
-    blurb:
-      "I wanted a tech briefing app, not bookmarks. Phase 1 worked — the smart part still needed proof.",
-    href: "/blog/i-didnt-want-another-bookmark-app/",
-    cover: "/blog/covers/i-didnt-want-another-bookmark-app.png",
-    coverAlt: "A tight teal loop through document, storage, and search.",
-  },
-  {
-    label: "Act II · The Reality Check",
-    title: "ModernBERT and the Overlap Trap",
-    blurb:
-      "Similarity scored 0.91 and looked like a pass. Four other checks on the same rows disagreed.",
-    href: "/blog/overlap-is-not-faithfulness/",
-    cover: "/blog/covers/overlap-is-not-faithfulness.png",
-    coverAlt: "Two overlapping circles beside a scorecard — overlap is not faithfulness.",
-  },
-  {
-    label: "Act III · The Infrastructure",
-    title: "Fixing LLM Offset Hallucinations",
-    blurb:
-      "Benchmarks need gold data. LLMs write prose well and count characters badly — I inverted the pipeline.",
-    href: "/blog/entity-first-gold/",
-    cover: "/blog/covers/entity-first-gold.png",
-    coverAlt: "Structured data flowing into a document with highlighted spans.",
-  },
-  {
-    label: "Act IV · How I work with agents",
-    title: "Agents Draft. I Sign.",
-    blurb:
-      "Walk the problem with agents first, then constrain output with tests and public evidence.",
-    href: "/blog/agents-draft-i-sign/",
-    cover: "/blog/covers/agents-draft-i-sign.png",
-    coverAlt: "A winding teal path through a stylized map — explore before you build.",
-  },
-];
-
-const standalonePosts = [
-  {
-    title: "Agent Quality Engineering: Grade the Protocol, Not the Chat",
-    blurb:
-      "AQ is not prompt craft — grade server-owned progress, scenario contracts, and parity across turns.",
-    href: "/blog/aq-better-ai-engineer/",
-    cover: "/blog/covers/aq-better-ai-engineer.png",
-    coverAlt: "Chat on the left, progress checklist on the right, parity checkpoint below.",
-  },
-  {
-    title: "Specs Drive. Tests Validate.",
-    blurb:
-      "User stories and SDD set intent; unit, integration, E2E, and lifecycle matrices prove it.",
-    href: "/blog/specs-drive-tests-validate/",
-    cover: "/blog/covers/specs-drive-tests-validate.png",
-    coverAlt: "Specification document flowing into a validated test pyramid.",
-  },
-  {
-    title: "Did the Summary Keep the Important Bits?",
-    blurb:
-      "Four plain checks on the same summary — similar wording, names, numbers, and sentence truth.",
-    href: "/blog/faithfulness-metrics-map/",
-    cover: "/blog/covers/faithfulness-metrics-map.png",
-    coverAlt: "Four simple checks pointing at one summary — sounding right is not the same as keeping what mattered.",
-  },
-];
-
-const homeReadingSource = [
-  "I couldn't trust my own recommender pipeline.",
-  "I was building a way to ingest arXiv and YouTube and hand myself a briefing.",
-  "Each act is one failure mode I hit while trying to ship ArticleRecommender.",
-  "Standalone posts on shipping agent-written software I can actually sign off on.",
-  "Proof, not vibes.",
-  "Where to go next. The four acts are one arc; standalone posts go deeper on specs, tests, and AQ.",
-  ...arcSteps.map((step) => `${step.title}. ${step.blurb}`),
-  ...standalonePosts.map((post) => `${post.title}. ${post.blurb}`),
-].join(" ");
-const homeMetaLabel = pageReadingLabel("Home", homeReadingSource);
+const formatDate = (date: Date) =>
+  date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 ---
 
 <BaseLayout
-  title="marfago labs"
-  description="Open-source evaluation lab — gold data, benchmarks, and public evidence before agentic ingest ships."
+  title="Marco Fago"
+  description="Software engineer in Dublin. Agentic systems, and how to know an AI answer is right."
 >
-  <div class="page-content hero">
-    <PageMetaRow
-      label={homeMetaLabel}
-      version={meta.version}
-      published={meta.published}
-      lastUpdated={meta.lastUpdated}
-      tightBelow={true}
-    />
-    <figure class="hero-cover">
-      <img
-        src="/blog/covers/home.png"
-        alt="A teal pipeline paused at a measurement checkpoint — trust before ship."
-        width="1200"
-        height="675"
-        loading="eager"
-      />
-    </figure>
-    <h1>I couldn't trust my own recommender pipeline.</h1>
+  <div class="page-content">
+    <h1>Hi, I'm Marco</h1>
     <p class="lead">
-      I was building a way to ingest arXiv and YouTube and hand myself a briefing.
-      The demos looked fine. I had no way to know the summaries were true — or which
-      NER backend to trust, or whether my gold data was valid.
+      I'm a software engineer in Dublin. I've been building distributed systems and ML
+      platforms for more than 25 years, and these days most of my time goes into agentic
+      systems.
     </p>
-    <p class="proof-hook">
-      <strong>marfago-labs</strong> is what I built instead: repos, gold data, benchmarks,
-      and CI-published reports. The blog series
-      <a href="/blog/series-index/">Building an Evaluation Lab by Accident</a>
-      tells the story; this site links the artifacts.
+    <p>
+      Most of what I write about comes from one question: when an AI system gives me an
+      answer, how do I know it's right? The series
+      <a href="/blog/series-index/">Building an Evaluation Lab by Accident</a> tells how I
+      got there.
     </p>
-
-    <div class="hero-actions">
-      <a class="button" href="/blog/series-index/">Read the series</a>
-      <a class="button button--ghost" href="/projects/ner/">NER pipeline</a>
-      <a class="button button--ghost" href="/blog/">All posts</a>
-    </div>
   </div>
 
   <section class="section page-content">
-    <h2>The story in four acts</h2>
-    <p class="section-intro">
-      Each act is one failure mode I hit while trying to ship ArticleRecommender — and
-      the mechanism I built to answer it.
+    <h2>Projects</h2>
+    <div class="project">
+      <img
+        class="project-logo"
+        src="/projects/paper-research-logo.svg"
+        alt="The paper-research logo: a bee with a magnifying glass for a head, over a stack of books."
+        width="112"
+        height="97"
+      />
+      <p>
+        <strong><a href="https://github.com/marfago-labs/paper-research">paper-research</a></strong>
+        is a Claude Code plugin for finding, reading, and discussing research papers. It keeps
+        notes and a knowledge graph in plain files, and every claim in the graph records where
+        it came from and how it was checked.
+      </p>
+    </div>
+    <p>
+      <strong>An NER evaluation pipeline</strong>, in three parts:
     </p>
-    <ul class="story-grid">
-      {
-        arcSteps.map((step) => (
-          <li>
-            <a class="story-card" href={step.href}>
-              <span class="story-thumb">
-                <img
-                  src={step.cover}
-                  alt={step.coverAlt}
-                  width="320"
-                  height="180"
-                  loading="lazy"
-                />
-              </span>
-              <span class="story-body">
-                <span class="story-label">{withReadingLabel(step.label, step.href)}</span>
-                <span class="story-title">{step.title}</span>
-                <span class="story-blurb">{step.blurb}</span>
-              </span>
-            </a>
-          </li>
-        ))
-      }
+    <ul>
+      <li>
+        <a href="https://github.com/marfago-labs/ner-gold-generator">ner-gold-generator</a>
+        builds labelled datasets. Models propose the entities, and the code computes every
+        offset from the source text, so no position is taken on trust.
+      </li>
+      <li>
+        <a href="https://github.com/marfago-labs/ner-dataset">ner-dataset</a> holds the
+        datasets, with <a href="/ner-dataset/">quality statistics</a>.
+      </li>
+      <li>
+        <a href="https://github.com/marfago-labs/ner-detector">ner-detector</a> compares
+        regex, BERT, GLiNER, NuNER, and LLM extractors on that data, and publishes the
+        <a href="/ner-detector/">results</a>.
+      </li>
     </ul>
+    <p class="muted">
+      <a href="/projects/">All projects</a>
+    </p>
   </section>
 
   <section class="section page-content">
-    <h2>Beyond the series</h2>
-    <p class="section-intro">
-      Standalone posts on shipping agent-written software I can actually sign off on.
-    </p>
-    <ul class="story-grid story-grid--two">
+    <h2>Writing</h2>
+    <ul class="post-list">
       {
-        standalonePosts.map((post) => {
-          const readingLabel = readingLabelForHref(post.href);
-          return (
+        posts.map((post) => (
           <li>
-            <a class="story-card" href={post.href}>
-              <span class="story-thumb">
-                <img
-                  src={post.cover}
-                  alt={post.coverAlt}
-                  width="320"
-                  height="180"
-                  loading="lazy"
-                />
-              </span>
-              <span class="story-body">
-                {readingLabel && <span class="story-label">{readingLabel}</span>}
-                <span class="story-title">{post.title}</span>
-                <span class="story-blurb">{post.blurb}</span>
-              </span>
-            </a>
+            <time datetime={post.data.date.toISOString().slice(0, 10)}>
+              {formatDate(post.data.date)}
+            </time>
+            <a href={`/blog/${postSlug(post.id)}/`}>{post.data.title}</a>
           </li>
-          );
-        })
-      }
-    </ul>
-  </section>
-
-  <section class="section">
-    <h2 class="page-content">Proof, not vibes</h2>
-    <div class="card-grid page-content">
-      <a class="card card-link card-link--proof" href="/blog/overlap-is-not-faithfulness/">
-        <p class="card-kicker">From the blog</p>
-        <h3>When 0.91 was not a pass</h3>
-        <p class="card-question">
-          ModernBERT F1 near 0.91 on compression summaries — until entity, numeric,
-          and NLI checks disagreed on the same rows.
-        </p>
-      </a>
-      {
-        evidenceLinks.map((item) => (
-          <a
-            class="card card-link"
-            href={item.href}
-            {...(item.href.startsWith("http")
-              ? { target: "_blank", rel: "noopener" }
-              : {})}
-          >
-            <h3>{item.title}</h3>
-            <p class="card-question">{item.question}</p>
-            <p class="muted">{item.source}</p>
-          </a>
         ))
       }
-    </div>
+    </ul>
+    <p class="muted">
+      <a href="/blog/">All posts</a>
+    </p>
   </section>
 
-  <section class="section page-content closing">
-    <h2>Where to go next</h2>
-    <p class="section-intro">
-      The four acts are one arc — illusion, reality check, infrastructure, then how I
-      work with agents. Standalone posts go deeper on specs, tests, and AQ. The operating
-      model — walk, loop, sign — is in <a href="/blog/agents-draft-i-sign/">Act IV</a>;
-      the full write-up is on <a href="/about/">About</a>.
+  <section class="section page-content">
+    <h2>Elsewhere</h2>
+    <p>
+      I write about what I learn here and on
+      <a href="https://www.linkedin.com/in/marco-fago/">LinkedIn</a>. I was also a technical
+      reviewer of
+      <a href="https://www.amazon.com/Agentic-Design-Patterns-Hands-Intelligent/dp/3032014018"
+        ><em>Agentic Design Patterns</em></a
+      >
+      by Antonio Gulli.
     </p>
-    <div class="hero-actions closing-actions">
-      <a class="button" href="/blog/series-index/">Read the series</a>
-      <a class="button button--ghost" href="/blog/agents-draft-i-sign/">Act IV · Agents Draft. I Sign.</a>
-      <a class="button button--ghost" href="/about/">How I work</a>
-    </div>
   </section>
 </BaseLayout>
 
 <style>
-  .hero-cover {
-    margin: 0 0 0.5rem;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    box-shadow: 0 4px 20px rgba(26, 26, 24, 0.06);
-  }
-  .hero-cover img {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-  }
-  .proof-hook {
-    margin-top: 1rem;
-  }
-  .hero-actions {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    margin: 1.75rem 0 0;
-  }
-  .button {
-    display: inline-block;
-    padding: 0.55rem 1.1rem;
-    background: var(--accent);
-    color: #fff !important;
-    text-decoration: none;
-    border-radius: 6px;
-    font-size: 0.92rem;
-    font-weight: 500;
-  }
-  .button:not(.button--ghost):hover {
-    background: var(--accent-hover);
-    color: #fff !important;
-  }
-  .button--ghost {
-    background: transparent;
-    color: var(--accent) !important;
-    border: 1px solid var(--border);
-  }
-  .button--ghost:hover {
-    border-color: var(--accent);
-    background: var(--surface);
-    color: var(--accent-hover) !important;
-  }
   .section {
-    margin-top: 3rem;
+    margin-top: 2.5rem;
   }
   .section > h2 {
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.75rem;
   }
-  .section-intro {
-    color: var(--muted);
-    margin: 0 0 1.25rem;
-    max-width: 38rem;
+  .project {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    margin-bottom: 1rem;
   }
-  .story-grid {
+  .project p {
+    margin: 0;
+  }
+  .project-logo {
+    flex: 0 0 7rem;
+    width: 7rem;
+    height: auto;
+  }
+  .post-list {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 0 0 1rem;
     display: grid;
-    gap: 1rem;
+    gap: 0.6rem;
   }
-  @media (min-width: 640px) {
-    .story-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    .story-grid--two {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  .story-card {
+  .post-list li {
     display: flex;
     gap: 1rem;
-    padding: 0.85rem;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: var(--surface, #faf8f4);
-    text-decoration: none;
-    color: inherit;
-    height: 100%;
-    transition: border-color 0.15s;
+    align-items: baseline;
   }
-  .story-card:hover {
-    border-color: var(--accent);
-  }
-  .story-thumb {
-    flex: 0 0 5.5rem;
-    border-radius: 6px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    align-self: flex-start;
-  }
-  .story-thumb img {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-  }
-  .story-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    min-width: 0;
-  }
-  .story-label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  .post-list time {
+    flex: 0 0 6.5rem;
+    font-size: 0.85rem;
     color: var(--muted);
-  }
-  .story-title {
-    font-weight: 600;
-    font-size: 0.98rem;
-    color: var(--text);
-  }
-  .story-card:hover .story-title {
-    color: var(--accent);
-  }
-  .story-blurb {
-    font-size: 0.88rem;
-    line-height: 1.45;
-    color: var(--muted);
+    font-variant-numeric: tabular-nums;
   }
   @media (max-width: 480px) {
-    .story-card {
+    .project {
       flex-direction: column;
+      align-items: flex-start;
     }
-    .story-thumb {
-      flex-basis: auto;
-      max-width: 100%;
+    .post-list li {
+      flex-direction: column;
+      gap: 0.1rem;
     }
-  }
-  .card-link {
-    text-decoration: none;
-    color: inherit;
-    transition: border-color 0.15s;
-  }
-  .card-link:hover {
-    border-color: var(--accent);
-  }
-  .card-link h3 {
-    margin: 0 0 0.5rem;
-    font-size: 1.05rem;
-    color: var(--accent);
-  }
-  .card-kicker {
-    margin: 0 0 0.35rem;
-    font-size: 0.72rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--muted);
-  }
-  .card-link--proof h3 {
-    color: var(--text);
-  }
-  .card-question {
-    margin: 0 0 0.5rem;
-    font-size: 0.95rem;
-    line-height: 1.45;
-    color: var(--text, inherit);
-  }
-  .closing-actions {
-    margin-top: 0.25rem;
   }
 </style>

@@ -172,3 +172,18 @@ li {
   text-align: center;
   line-height: 1.45;
 }
+
+/* Screenshots and other images in a post fit the column. The cover has its own frame, so it is left out. */
+.prose img:not(.cover img) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.25rem auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.prose img[src*="/blog/diagrams/"] {
+  border: none;
+  border-radius: 0;
+}

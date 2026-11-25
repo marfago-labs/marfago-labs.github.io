@@ -4,7 +4,6 @@
 
 /** Site page .astro paths (repo-relative) → sitePageMeta key */
 export const SITE_PAGE_MAP = {
-  "website/src/pages/index.astro": "home",
   "website/src/pages/about.astro": "about",
   "website/src/pages/blog/index.astro": "blog",
   "website/src/pages/projects/index.astro": "projects",
