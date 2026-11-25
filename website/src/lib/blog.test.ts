@@ -4,6 +4,7 @@ import {
   getActLabel,
   getPostMetaLabel,
   isStandalonePost,
+  newestFirst,
   partitionBlogPosts,
   postSlug,
   STANDALONE_ORDER_MIN,
@@ -43,6 +44,22 @@ describe("isStandalonePost", () => {
   });
 });
 
+describe("newestFirst", () => {
+  const post = (title: string, date: string) => ({
+    data: { title, date: new Date(date) },
+  });
+
+  it("puts the later date first", () => {
+    expect(newestFirst(post("A", "2026-06-19"), post("B", "2026-06-21"))).toBeGreaterThan(0);
+    expect(newestFirst(post("B", "2026-06-21"), post("A", "2026-06-19"))).toBeLessThan(0);
+  });
+
+  it("sorts a shared day by title", () => {
+    expect(newestFirst(post("Alpha", "2026-06-21"), post("Beta", "2026-06-21"))).toBeLessThan(0);
+    expect(newestFirst(post("Beta", "2026-06-21"), post("Alpha", "2026-06-21"))).toBeGreaterThan(0);
+  });
+});
+
 describe("partitionBlogPosts", () => {
   const posts: BlogPostEntry[] = [
     {
@@ -76,13 +93,32 @@ describe("partitionBlogPosts", () => {
     },
   ];
 
-  it("splits series and standalone posts and sorts by order", () => {
+  it("splits series and standalone posts and sorts the series by order", () => {
     const { series, standalone } = partitionBlogPosts(posts);
     expect(series.map((p) => p.id)).toEqual([
       "00-series-index.md",
       "01-chapter.md",
     ]);
     expect(standalone.map((p) => p.id)).toEqual(["specs.md"]);
+  });
+
+  it("puts the newest standalone post first, and sorts a shared day by title", () => {
+    const standalone = (id: string, title: string, date: string, order: number) => ({
+      id,
+      data: { order, title, description: title, date: new Date(date) },
+    });
+    const result = partitionBlogPosts([
+      standalone("old.md", "Old", "2026-06-19", 9001),
+      standalone("b.md", "Beta", "2026-06-21", 9003),
+      standalone("a.md", "Alpha", "2026-06-21", 9002),
+      standalone("new.md", "New", "2026-11-17", 9004),
+    ]);
+    expect(result.standalone.map((p) => p.id)).toEqual([
+      "new.md",
+      "a.md",
+      "b.md",
+      "old.md",
+    ]);
   });
 });
 
