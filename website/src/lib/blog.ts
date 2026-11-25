@@ -35,7 +35,12 @@ export function partitionBlogPosts<T extends BlogPostEntry>(posts: T[]) {
     isStandalonePost(p.data.series, p.data.order),
   );
   series.sort((a, b) => a.data.order - b.data.order);
-  standalone.sort((a, b) => a.data.order - b.data.order);
+  // Standalone posts are independent, so the newest comes first. Posts of the same day sort by title.
+  standalone.sort(
+    (a, b) =>
+      b.data.date.getTime() - a.data.date.getTime() ||
+      a.data.title.localeCompare(b.data.title),
+  );
   return { series, standalone };
 }
 
