@@ -8,7 +8,7 @@
 
  <g id="beelens">
   <!-- soft shadow -->
-  
+
   <!-- wings (behind) -->
   <g transform="translate(176 120)">
    <path d="M0 0 C 20 -70, 96 -70, 92 -18 C 88 18, 30 22, 0 0Z" fill="url(#wing)" stroke="#ffffff" stroke-width="3"/>
