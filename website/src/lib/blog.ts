@@ -27,6 +27,17 @@ export interface BlogPostEntry {
   };
 }
 
+/** Newest first. Posts of the same day sort by title, so their order is fixed. */
+export function newestFirst(
+  a: { data: { date: Date; title: string } },
+  b: { data: { date: Date; title: string } },
+): number {
+  return (
+    b.data.date.getTime() - a.data.date.getTime() ||
+    a.data.title.localeCompare(b.data.title)
+  );
+}
+
 export function partitionBlogPosts<T extends BlogPostEntry>(posts: T[]) {
   const series = posts.filter(
     (p) => !isStandalonePost(p.data.series, p.data.order),
@@ -35,12 +46,8 @@ export function partitionBlogPosts<T extends BlogPostEntry>(posts: T[]) {
     isStandalonePost(p.data.series, p.data.order),
   );
   series.sort((a, b) => a.data.order - b.data.order);
-  // Standalone posts are independent, so the newest comes first. Posts of the same day sort by title.
-  standalone.sort(
-    (a, b) =>
-      b.data.date.getTime() - a.data.date.getTime() ||
-      a.data.title.localeCompare(b.data.title),
-  );
+  // Standalone posts are independent, so the newest comes first.
+  standalone.sort(newestFirst);
   return { series, standalone };
 }
 

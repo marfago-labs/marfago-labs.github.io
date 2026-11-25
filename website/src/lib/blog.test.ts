@@ -4,6 +4,7 @@ import {
   getActLabel,
   getPostMetaLabel,
   isStandalonePost,
+  newestFirst,
   partitionBlogPosts,
   postSlug,
   STANDALONE_ORDER_MIN,
@@ -40,6 +41,22 @@ describe("isStandalonePost", () => {
 
   it("treats series posts without order as in-series", () => {
     expect(isStandalonePost("marfago-labs-origin", undefined)).toBe(false);
+  });
+});
+
+describe("newestFirst", () => {
+  const post = (title: string, date: string) => ({
+    data: { title, date: new Date(date) },
+  });
+
+  it("puts the later date first", () => {
+    expect(newestFirst(post("A", "2026-06-19"), post("B", "2026-06-21"))).toBeGreaterThan(0);
+    expect(newestFirst(post("B", "2026-06-21"), post("A", "2026-06-19"))).toBeLessThan(0);
+  });
+
+  it("sorts a shared day by title", () => {
+    expect(newestFirst(post("Alpha", "2026-06-21"), post("Beta", "2026-06-21"))).toBeLessThan(0);
+    expect(newestFirst(post("Beta", "2026-06-21"), post("Alpha", "2026-06-21"))).toBeGreaterThan(0);
   });
 });
 

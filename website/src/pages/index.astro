@@ -1,17 +1,13 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-import { postSlug } from "../lib/blog";
+import { newestFirst, postSlug } from "../lib/blog";
 
 const LATEST = 5;
 
 const posts = (await getCollection("blog"))
   .filter((post) => post.data.order !== 0)
-  .sort(
-    (a, b) =>
-      b.data.date.getTime() - a.data.date.getTime() ||
-      a.data.title.localeCompare(b.data.title),
-  )
+  .sort(newestFirst)
   .slice(0, LATEST);
 
 const formatDate = (date: Date) =>
