@@ -1,12 +1,9 @@
 ---
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
-const svgPath = path.join(
-  fileURLToPath(new URL(".", import.meta.url)),
-  "../../public/blog/diagrams/walk-loop-sign.svg",
-);
+// The build runs from website/, and the bundled page no longer sits next to src/, so resolve from there.
+const svgPath = path.join(process.cwd(), "public/blog/diagrams/walk-loop-sign.svg");
 const markup = readFileSync(svgPath, "utf-8");
 
 interface Props {

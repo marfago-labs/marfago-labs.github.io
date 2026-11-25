@@ -70,7 +70,7 @@ const blogMetaLabel = pageReadingLabel("Blog", blogReadingSource);
                     {post.data.series &&
                       post.data.order !== 0 &&
                       ` · Part ${post.data.order}`}
-                    · {formatReadingTime(readingMinutes(post.body))} ·{" "}
+                    {" "}· {formatReadingTime(readingMinutes(post.body ?? ""))} ·{" "}
                     {formatPageStamp({
                       version: post.data.version,
                       published: post.data.date,
@@ -111,7 +111,7 @@ const blogMetaLabel = pageReadingLabel("Blog", blogReadingSource);
                   <div class="post-body">
                     <p class="muted meta">
                       {getActLabel(post.data.order, post.data.series)} ·{" "}
-                      {formatReadingTime(readingMinutes(post.body))} ·{" "}
+                      {formatReadingTime(readingMinutes(post.body ?? ""))} ·{" "}
                       {formatPageStamp({
                         version: post.data.version,
                         published: post.data.date,
